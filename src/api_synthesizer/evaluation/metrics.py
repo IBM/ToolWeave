@@ -1,3 +1,8 @@
+#
+# Copyright IBM Corp. 2026
+# SPDX-License-Identifier: Apache-2.0
+#
+
 def evaluate_api_set(apis: list[dict]) -> dict:
     """
     Evaluate API quality and complexity across multiple dimensions.
