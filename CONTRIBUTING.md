@@ -1,84 +1,90 @@
-## Contributing In General
-Our project welcomes external contributions. If you have an itch, please feel
-free to scratch it.
+# Contributing
 
-To contribute code or documentation, please submit a **FIXME** [pull request](https://github.com/ibm/repo-template/pulls).
+Contributions to ToolWeave are welcome. This project accompanies the paper
+*ToolWeave: Structured Synthesis of Complex Multi-Turn Tool-Calling Dialogues*,
+so changes that improve the reproducibility or clarity of the synthesis pipeline
+are especially useful.
 
-A good way to familiarize yourself with the codebase and contribution process is
-to look for and tackle low-hanging fruit in the **FIXME** [issue tracker](https://github.com/ibm/repo-template/issues).
-Before embarking on a more ambitious contribution, please quickly [get in touch](#communication) with us.
+## Contributing in general
 
-**Note: We appreciate your effort, and want to avoid a situation where a contribution
-requires extensive rework (by you or by us), sits in backlog for a long time, or
-cannot be accepted at all!**
+To contribute code or documentation, please open a
+[pull request](https://github.com/IBM/ToolWeave/pulls).
 
-### Proposing new features
+Before starting on anything substantial, please
+[raise an issue](https://github.com/IBM/ToolWeave/issues) so it can be discussed
+first. This applies both to new features and to bug fixes, and avoids work that
+turns out to duplicate or conflict with something already in progress.
 
-If you would like to implement a new feature, please **FIXME** [raise an issue](https://github.com/ibm/repo-template/issues)
-before sending a pull request so the feature can be discussed. This is to avoid
-you wasting your valuable time working on a feature that the project developers
-are not interested in accepting into the code base.
+### Reporting bugs
 
-### Fixing bugs
+When reporting a bug, include the command you ran, the relevant portion of the
+output, and which model and configuration you used. Because the pipeline calls
+LLMs, please note whether the behaviour reproduces across runs — generation
+variance is expected in some stages.
 
-If you would like to fix a bug, please **FIXME** [raise an issue](https://github.com/ibm/repo-template/issues) before sending a
-pull request so it can be tracked.
+## Setup
 
-### Merge approval
+The project targets **Python 3.13+** and pins its dependencies in `uv.lock`.
 
-The project maintainers use LGTM (Looks Good To Me) in comments on the code
-review to indicate acceptance. A change requires LGTMs from two of the
-maintainers of each component affected.
+```bash
+uv sync
+```
 
-For a list of the maintainers, see the [MAINTAINERS.md](MAINTAINERS.md) page.
+To use watsonx.ai models, create a `.env` file in the repository root as
+described in the [README](README.md), and set your model parameters in
+`watsonx_llm_config.yml`. For a vLLM endpoint, use `vllm_llm_config.yml`
+instead. Never commit `.env` or any credentials.
+
+## Testing
+
+This repository has no automated test suite. Before opening a pull request,
+verify your change by running the affected stage end to end on a single domain —
+for example, restricting `domains.txt` to one entry and running the pipeline as
+documented in the README. Include the command you used and a short summary of
+the result in your pull request description.
+
+## Coding style
+
+Match the surrounding code. The existing scripts use type annotations and
+docstrings throughout; please keep both for any function you add or modify.
+
+## Merge approval
+
+The maintainers use LGTM (Looks Good To Me) in review comments to indicate
+acceptance. For the list of maintainers, see [MAINTAINERS.md](MAINTAINERS.md).
 
 ## Legal
 
-Each source file must include a license header for the Apache
-Software License 2.0. Using the SPDX format is the simplest approach.
-e.g.
+Each source file must include a copyright and license header. The SPDX format is
+preferred:
 
 ```
-/*
-Copyright <holder> All Rights Reserved.
-
-SPDX-License-Identifier: Apache-2.0
-*/
+#
+# Copyright IBM Corp. 2026
+# SPDX-License-Identifier: Apache-2.0
+#
 ```
 
-We have tried to make it as easy as possible to make contributions. This
-applies to how we handle the legal aspects of contribution. We use the
-same approach - the [Developer's Certificate of Origin 1.1 (DCO)](https://github.com/hyperledger/fabric/blob/master/docs/source/DCO1.1.txt) - that the Linux® Kernel [community](https://elinux.org/Developer_Certificate_Of_Origin)
-uses to manage code contributions.
-
-We simply ask that when submitting a patch for review, the developer
-must include a sign-off statement in the commit message.
-
-Here is an example Signed-off-by line, which indicates that the
-submitter accepts the DCO:
+This project uses the
+[Developer Certificate of Origin 1.1 (DCO)](https://developercertificate.org/),
+the same mechanism the Linux kernel community uses to manage code
+contributions. When you submit a patch, include a sign-off line in the commit
+message:
 
 ```
-Signed-off-by: John Doe <john.doe@example.com>
+Signed-off-by: Jane Doe <jane.doe@example.com>
 ```
 
-You can include this automatically when you commit a change to your
-local git repository using the following command:
+Git adds this for you with:
 
-```
+```bash
 git commit -s
 ```
 
+The DCO bot checks this on incoming pull requests.
+
 ## Communication
-**FIXME** Please feel free to connect with us on our [Slack channel](link).
 
-## Setup
-**FIXME** Please add any special setup instructions for your project to help the developer
-become productive quickly.
-
-## Testing
-**FIXME** Please provide information that helps the developer test any changes they make
-before submitting.
-
-## Coding style guidelines
-**FIXME** Optional, but recommended: please share any specific style guidelines you might
-have for your project.
+For questions about the paper or the pipeline, open an
+[issue](https://github.com/IBM/ToolWeave/issues) or contact the maintainer
+listed in [MAINTAINERS.md](MAINTAINERS.md).

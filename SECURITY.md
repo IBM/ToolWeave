@@ -1,17 +1,27 @@
 # Security Policy
 
-## Supported Versions
-
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
-
 ## Reporting a Vulnerability
 
-To report a security issue, please email $VMTalias with a description of the issue, the steps you took to create the issue, affected versions, and if known, mitigations for the issue. Our vulnerability management team will acknowledge receiving your email within 3 working days. This project follows a 90 day disclosure timeline.
+If you believe you have found a security vulnerability in ToolWeave, please
+report it privately. **Do not open a public GitHub issue for security reports.**
+
+Email the maintainer at **dikhand1@in.ibm.com** with:
+
+- a description of the issue,
+- the steps required to reproduce it,
+- the affected version or commit,
+- and, if known, any mitigations.
+
+You will receive an acknowledgement within 3 working days. This project follows
+a 90 day disclosure timeline.
+
+## Scope
+
+ToolWeave is a research tool for synthesizing tool-calling dialogue data. It is
+provided as-is for research use and is not a supported IBM product. Only the
+`main` branch is maintained; there are no backported security fixes for earlier
+commits.
+
+Note that this project invokes external LLM services and, during API synthesis,
+fetches public data from the Wikipedia and Wikidata APIs. Review your own
+credential handling and network policy before running it.
