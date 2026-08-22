@@ -154,6 +154,10 @@ This project is licensed under the Apache License, Version 2.0. See [LICENSE](LI
 
 ## 📙 Citation
 
+[![arXiv](https://img.shields.io/badge/arXiv-2605.12521-b31b1b.svg)](https://arxiv.org/abs/2605.12521)
+
+Paper: [arXiv:2605.12521](https://arxiv.org/abs/2605.12521)
+
 If you use this repo or our paper in your research, please cite:
 
 ```bibtex
