@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+
+# JetBrains IDEs (like PyCharm)
+.idea/
+
+# VSCode
+
+.vscode/
+
+# Python
+__pycache__/
+
+.env
+
+*param_embeds.pkl
+*result_embeds.pkl
+
+*.lock
+
+# We want to keep the lock file for reproducibility
+!uv.lock
+
+MCTS_idea.md
+refactor.py
+
+*lib/
+
+# Ignore output files
+output*/
+
+# Ignore conversation and tool sample data files
+convo.json
+tool.json

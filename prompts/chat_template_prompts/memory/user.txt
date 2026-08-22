@@ -1,0 +1,146 @@
+## Guidelines
+- Output must be a single JSON object containing the updated memory cache.
+- Do not wrap the output in markdown or code fences.
+- Do not include any additional keys or fields beyond the updated cache.
+- Only update keys present in the last user message or tool call result; preserve all others.
+- Respect data type normalization: dates as "YYYY-MM-DD" and times as "HH:MM:SS".
+- Ensure each value in the memory cache exactly matches its declared type; do not enclose numeric or boolean values in quotes.
+- If there is no new information to update, output the existing memory cache unchanged, even if it is empty.
+
+---
+
+## Examples
+
+### Example 1
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-07-01 08:00:00. Location: Berlin."
+  },
+  {
+    "role": "user",
+    "content": "I want to book a hotel in Tokyo from July 5th."
+  },
+  {
+    "role": "assistant",
+    "content": "Got it. What time will you arrive and on what day will you check out?"
+  },
+  {
+    "role": "user",
+    "content": "You can assume arrival at 15:00 and I'll be leaving on July 10th."
+  }
+]
+</Dialogue History>
+
+<Memory Cache>
+{
+  "location": "Tokyo",
+  "check_in": "2025-07-05"
+}
+</Memory Cache>
+
+<Latest User Message>
+You can assume arrival at 15:00 and I'll be leaving on July 10th.
+</Latest User Message>
+
+<Latest Tool Call Result>
+N/A
+</Latest Tool Call Result>
+
+Updated Memory Cache:
+{
+  "location": "Tokyo",
+  "check_in": "2025-07-05",
+  "check_out": "2025-07-10",
+  "arrival_time": "15:00"
+}
+
+### Example 2  
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-03-12 09:15:00. Location: San Francisco."
+  },
+  {
+    "role": "user",
+    "content": "I'm looking for Italian restaurants tomorrow evening."
+  },
+  {
+    "role": "assistant",
+    "content": "Sure, what location?"
+  },
+  {
+    "role": "user",
+    "content": "Let's do Brooklyn."
+  },
+  {
+    "role": "assistant",
+    "content": "How many people are in your party?"
+  },
+  {
+    "role": "user",
+    "content": "Just two of us."
+  },
+  {
+    "role": "assistant_tool_call",
+    "content": "[{\"name\": \"search_restaurants\", \"arguments\": {\"cuisine\": \"Italian\", \"location\": \"Brooklyn\", \"date\": \"2025-07-20\"}}]"
+  }
+]
+</Dialogue History>
+
+<Memory Cache>
+{
+  "cuisine": "Italian",
+  "location": "Brooklyn",
+  "date": "2025-07-20"
+}
+</Memory Cache>
+
+<Latest User Message>
+N/A
+</Latest User Message>
+
+<Latest Tool Call Result>
+{
+  "reservation_id": "res-1234",
+  "party_size": 2
+}
+</Latest Tool Call Result>
+
+Updated Memory Cache:
+{
+  "cuisine": "Italian",
+  "location": "Brooklyn",
+  "date": "2025-07-20",
+  "reservation_id": "res-1234",
+  "party_size": 2
+}
+
+---
+
+## Inputs
+### Dialogue History: The full dialogue so far (system, user, assistant messages and tool calls).
+<Dialogue History>
+{{history}}
+</Dialogue History>
+
+### Memory Cache: A JSON object containing extracted slots or facts from earlier turns.
+<Memory Cache>
+{{memory_cache}}
+</Memory Cache>
+
+### Latest User Message: The most recent message from the user, if any.
+<Latest User Message>
+{{latest_user_message}}
+</Latest User Message>
+
+### Latest Tool Call Result: The result of the most recent tool call, if any.
+<Latest Tool Call Result>
+{{latest_tool_result}}
+</Latest Tool Call Result>
+
+---
+
+Generate the updated memory cache based on the provided inputs.

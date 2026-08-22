@@ -1,0 +1,108 @@
+You are an expert AI Planner. Your task is to create a realistic user goal that involves a conditional decision and return it as a structured JSON object.
+
+## Input Information
+- **Initial Tool:**
+{tool_A_name}
+
+- **List of outputs from initial tool:**
+{tool_A_outputs_str}
+
+- **Tool for the 'if' condition (when condition is satisfied):**
+{tool_C_name}: {tool_C_desc}
+
+- **Tool for the 'else' condition (when condition is not satisfied):**
+{tool_D_name}: {tool_D_desc}
+
+## Your Task
+- From the list of the Initial Tool's outputs, choose the most logical variable to base a decision on.
+- Invent a plausible condition by choosing an operator and a value for that variable.
+- Write a single, high-level user **GOAL** that describes the entire workflow abstractly.
+- The goal should clearly state the action to be taken if the condition is met and what to do if it is not met.
+
+## Expected Output format
+- Return your response ONLY as a single JSON object inside ```json ... ``` tags.
+  - The JSON object must have exactly two keys: "goal" and "condition_details".
+  - The "condition_details" key must map to a JSON object with exactly three keys: "variable", "operator", and "value".
+
+---
+
+## Examples
+
+### Example 1
+- **Initial Tool:**
+get_inventory_level
+
+- **List of outputs from initial tool:**
+  - stock_count (`int`): The current stock count of the product.
+  - location (`str`): The location of the inventory.
+  - product_id (`str`): The unique identifier for the product.
+
+- **Tool for the 'if' condition:**
+create_purchase_order: Create a new purchase order for the product.
+
+- **Tool for the 'else' condition:**
+schedule_inventory_audit: Schedule an inventory audit for the location.
+
+**Expected Output:**
+{{
+  "goal": "Check the inventory level for a product, and if the stock count is less than 20, create a new purchase order to replenish it; otherwise, schedule an inventory audit for that location.",
+  "condition_details": {{
+    "variable": "stock_count",
+    "operator": "<",
+    "value": 20
+  }}
+}}
+
+### Example 2
+- **Initial Tool:**
+get_car_details
+
+- **List of outputs from initial tool:**
+  - is_automatic (`bool`): Whether the car has automatic transmission.
+  - car_id (`str`): The unique identifier for the car.
+  - model (`str`): The model of the car.
+
+- **Tool for the 'if' condition:**
+reserve_car: Reserve the selected car for the user.
+
+- **Tool for the 'else' condition:**
+find_alternative_cars: Find alternative cars that match the user's preferences.
+
+**Expected Output:**
+{{
+  "goal": "Look up the details for a specific rental car, and if it has an automatic transmission, reserve it for me. If not, find alternative cars that are automatic.",
+  "condition_details": {{
+    "variable": "is_automatic",
+    "operator": "==",
+    "value": true
+  }}
+}}
+
+### Example 3
+- **Initial Tool:**
+get_payment_status
+
+- **List of outputs from initial tool:**
+  - status (`str`): The current status of the payment.
+  - payment_id (`str`): The unique identifier for the payment.
+  - amount (`float`): The amount of the payment.
+
+- **Tool for the 'if' condition:**
+send_payment_reminder_email: Send a reminder email to the customer about the payment.
+
+- **Tool for the 'else' condition:**
+archive_payment_record: Archive the payment record.
+
+**Expected Output:**
+{{
+  "goal": "Check the status of a recent payment, and if it's not yet complete, send a reminder email to the customer. Otherwise, simply archive the record.",
+  "condition_details": {{
+    "variable": "status",
+    "operator": "!=",
+    "value": "complete"
+  }}
+}}
+
+---
+
+Now, generate the JSON output for the previously provided input information:

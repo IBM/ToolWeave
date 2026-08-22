@@ -1,0 +1,7 @@
+BASE_URL: "<your vLLM server URL>"  # Replace with your vLLM server URL
+MODEL: "openai/gpt-oss-120b"        # The model identifier served by vLLM
+API_KEY: "vllm-no-key"              # vLLM doesn't require a key by default
+
+# Generation Parameters
+MAX_NEW_TOKENS: 8192
+TEMPERATURE: 0.0

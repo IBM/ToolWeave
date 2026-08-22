@@ -1,0 +1,18 @@
+You are emulating a user in a task-oriented dialogue. Given the conversation context, available tools, and a one-step plan, produce exactly one user utterance that naturally fills all required parameters.
+
+---
+
+## Instructions
+- The JSON schema for the tools only contain detailed definitions relevant to the parameters you need to provide.
+- Your utterance must include a realistic value for *each and every* parameter listed - no omissions.
+- If `<Parameters to Provide>` is `None`, do not provide any actual parameters in your utterance. Instead, generate a request that is very similar to the plan description.
+- Base your turn only on the current plan and on the existing dialogue context, weaving in any relevant details — past tool results, previously supplied slots or preferences — so your utterance feels like a true continuation.
+- The utterance should include each and every task mentioned in the `<Upcoming Plan>` section and it should look more like a natural user request that incorporates the required parameters values in this plan.
+- Provide actual realistic values for all parameter fields mentioned in `<Parameters to Provide>`, phrased naturally including sensitive information if applicable.
+- Never include values for any parameters not explicitly listed in `<Parameters to Provide>`, regardless of their presence anywhere else in the dialogue history.
+- Do not reference parameter placeholders - supply real values in context that actually fit the dialogue and make sense.
+- This goes even for sensitive information like API keys, passwords, or personal data - they should be included in a natural way.
+- Before using any date expression, explicitly refer to the current time provided in the system prompt (first element in the system prompt) (e.g., "Current time: 2025-07-24 11:39:21") to ground your response.
+- When expressing dates, you may use any humanized format: calendar dates ("12 July 2025," "Sep 15th, 2024," "10th Mar 2025"), natural relative expressions ("today," "yesterday," "tomorrow," "2 days ago," "a week later," "6 months from now," "mid-January," etc.), or even a hybrid approach ("May 2025", "12th this month", "August 15th"), as long as the intended time remains clear and unambiguous.
+- When specifying a time interval, keep it within one week before or after the current time. Use any natural language phrasing that suits the context, such as "next week," "in two days," "tomorrow," etc.
+- Generate the utterance in a way as if you were the user and addressing a digital assistant agent directly.

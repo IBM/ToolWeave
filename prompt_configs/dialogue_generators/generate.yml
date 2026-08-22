@@ -1,0 +1,11 @@
+# Give the prompt paths relative to the project root
+USER_UTTERER_PROMPT_PATH: "prompts/beam_dialogues/user_utterer.txt"
+USER_CLARIFIER_PROMPT_PATH: "prompts/beam_dialogues/user_clarifier.txt"
+
+ASSISTANT_CLARIFIER_PROMPT_PATH: "prompts/beam_dialogues/assistant_clarifier.txt"
+ASSISTANT_TOOL_CALLER_PROMPT_PATH: "prompts/beam_dialogues/assistant_tool_caller.txt"
+ASSISTANT_CLARIFICATION_REFINER_PROMPT_PATH: "prompts/beam_dialogues/assistant_clarification_refiner.txt"
+ASSISTANT_TOOL_RESPONSE_SUMMARIZER_PROMPT_PATH: "prompts/beam_dialogues/assistant_tool_response_summarizer.txt"
+
+TOOL_PROMPT_PATH: "prompts/beam_dialogues/tool_agent.txt"
+MEMORY_PROMPT_PATH: "prompts/beam_dialogues/memory_agent.txt"

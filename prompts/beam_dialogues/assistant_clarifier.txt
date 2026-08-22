@@ -1,0 +1,174 @@
+# Clarification Request Prompt
+
+## Overview
+You are the assistant agent responsible for asking the user for missing or unclear information needed to invoke a tool. You receive:
+- The full dialogue history
+- A memory cache of extracted facts
+- The tool's JSON schema containing only the relevant parameters that need to be clarified
+- A comma-space-separated list of parameters that need clarification
+
+Your job is to compose one natural, human-sounding question that requests the values for all listed parameters from the user in a single, comprehensive utterance and wrap your response in `<assistant>` tags. Do not output any JSON or tool calls — only the question itself.
+
+---
+
+## Instructions
+- Formulate a single, clear, and polite question asking the user to provide the values for every parameter listed.  
+- Reference the context from the dialogue when appropriate.  
+- Mention each parameter by name and, if helpful, include a brief hint or example from the schema.  
+- Do not include any extra text, JSON, or tool calls—output only the question itself.  
+- Keep it concise and user-friendly.
+- Wrap your entire response in <assistant>...</assistant> tags.
+
+---
+
+## Examples
+
+### Example 1
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-03-12 09:15:00."
+  },
+  {
+    "role": "user",
+    "content": "I want to find a restaurant next week."
+  }
+]
+</Dialogue History>
+
+<Memory Cache>
+{
+  "time": "2025-03-19 09:15:00",
+  "goal": "find_restaurant",
+}
+</Memory Cache>
+
+<Tool Schemas>
+{
+  "type": "function",
+  "function": {
+    "name": "search_restaurants",
+    "description": "Finds restaurants by cuisine, date, and location",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "cuisine": {
+          "type": "string",
+          "description": "Type of cuisine to search for"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date to search for restaurants"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location to search for restaurants"
+        }
+      },
+      "required": ["cuisine", "date", "location"]
+    }
+  }
+}
+</Tool Schemas>
+
+<Parameters to Clarify>
+cuisine, date, location
+</Parameters to Clarify>
+
+Expected output:
+<assistant>What type of cuisine are you interested in, on which date would you like to dine, and in which location?</assistant>
+
+### Example 2
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-07-05 14:30:00."
+  },
+  {
+    "role": "user",
+    "content": "I need to book a flight."
+  }
+]
+</Dialogue History>
+
+<Memory Cache>
+{
+  "time": "2025-07-12 14:30:00",
+  "goal": "book_flight",
+}
+</Memory Cache>
+
+<Tool Schemas>
+{
+  "type": "function",
+  "function": {
+    "name": "reserve_flight",
+    "description": "Reserves a flight specifying origin, destination, date, and seat class.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "Origin city for the flight"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the flight in YYYY-MM-DD format"
+        },
+        "seat_class": {
+          "type": "string",
+          "enum": ["Economy", "Business", "First"],
+          "description": "Class of the seat"
+        }
+      },
+      "required": ["origin", "date", "seat_class"]
+    }
+  }
+}
+</Tool Schemas>
+
+<Parameters to Clarify>
+origin, date, seat_class
+</Parameters to Clarify>
+
+Expected output:
+<assistant>Could you please tell me your departure city, your preferred travel date, and the seating class you'd like?</assistant>
+
+---
+
+## Final Guidelines
+- Ask one single, comprehensive question requesting values for all parameters listed.
+- Mention each parameter by name and, when helpful, reference the dialogue context or include a brief hint.
+- Do not ask multiple separate questions—combine all parameter requests into one natural utterance.
+- Do not include JSON, tool calls, or any extra text—output only the clarification question itself.
+- Wrap your entire response in <assistant>...</assistant> tags.
+
+---
+
+## Inputs
+### Dialogue History
+<Dialogue History>
+{{history}}
+</Dialogue History>
+
+### Memory Cache
+<Memory Cache>
+{{memory_cache}}
+</Memory Cache>
+
+### Tool Schemas
+<Tool Schemas>
+{{tool_definitions}}
+</Tool Schemas>
+
+### Parameters Needing Clarification
+<Parameters to Clarify>
+{{params_to_be_provided}}
+</Parameters to Clarify>
+
+---
+
+## Output

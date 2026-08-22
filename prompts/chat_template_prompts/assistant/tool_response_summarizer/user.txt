@@ -1,0 +1,139 @@
+## Guidelines
+- Always include every field listed in **Parameters to Report**.  
+- Do not introduce information not present in the memory cache or tool output.  
+- Keep your language clear, concise, and user-focused.  
+- Do not display JSON or code—only natural language.  
+- Maintain consistency with the conversation's tone and style.
+
+---
+
+## Examples
+
+### Example 1
+<Dialogue History>
+[
+  {
+    "role": "user",
+    "content": "Book me a flight from Seattle to Denver on August 15th."
+  },
+  {
+    "role": "assistant",
+    "content": "Economy or business class?"
+  },
+  {
+    "role": "user",
+    "content": "Economy, please."
+  },
+  {
+    "role": "assistant_tool_call",
+    "content": "[{\"name\": \"reserve_flight\", \"arguments\": {\"origin\": \"Seattle\", \"destination\": \"Denver\", \"date\": \"2025-08-15\", \"seat_class\": \"Economy\"}}]"
+  },
+  {
+    "role": "tool",
+    "content": "{\"flight_number\": \"AA123\", \"departure_time\": \"2025-08-15T09:00:00\", \"status\": \"Confirmed\"}"
+  }
+]
+</Dialogue History>
+
+<Memory Cache>
+{
+  "origin": "Seattle",
+  "destination": "Denver",
+  "date": "2025-08-15",
+  "seat_class": "Economy",
+  "flight_number": "AA123",
+  "departure_time": "2025-08-15T09:00:00",
+  "status": "Confirmed"
+}
+</Memory Cache>
+
+<Parameters to Report>
+flight_number, departure_time, status
+</Parameters to Report>
+
+<Tools Schema>
+{
+  "reserve_flight": {
+    "parameters": {
+      "flight_number": "string",
+      "departure_time": "string",
+      "status": "string"
+    }
+    ...
+  }
+}
+</Tools Schema>
+
+Expected output:
+I've booked your flight AA123 departing on August 15th at 9:00 AM. Your seat in Economy is confirmed.
+
+### Example 2
+<Dialogue History>
+[
+  {
+    "role": "user",
+    "content": "Find a good Italian restaurant in Brooklyn for tomorrow evening."
+  },
+  {
+    "role": "assistant_tool_call",
+    "content": "[{\"name\": \"search_restaurants\", \"arguments\": {\"cuisine\": \"Italian\", \"location\": \"Brooklyn\", \"date\": \"2025-07-20\"}}]"
+  },
+  {
+    "role": "tool",
+    "content": "{\"name\": \"Trattoria Roma\", \"address\": \"123 Main St, Brooklyn, NY\", \"rating\": 4.5}"
+  }
+]
+</Dialogue History>
+
+<Memory Cache>
+{
+  "cuisine": "Italian",
+  "location": "Brooklyn",
+  "date": "2025-07-20",
+  "name": "Trattoria Roma",
+  "address": "123 Main St, Brooklyn, NY",
+  "rating": 4.5
+}
+</Memory Cache>
+
+<Parameters to Report>
+name, address, rating
+</Parameters to Report>
+
+<Tools Schema>
+{
+  "search_restaurants": {
+    "parameters": {
+      "name": "string",
+      "address": "string",
+      "rating": "number"
+    }
+    ...
+  }
+}
+</Tools Schema>
+
+Expected output:
+I found Trattoria Roma in Brooklyn at 123 Main St. It has a 4.5-star rating and looks perfect for tomorrow evening.
+
+---
+
+## Inputs
+### Dialogue History: The full exchange up to this point, including system messages, user questions, and assistant replies.
+<Dialogue History>
+{{history}}
+</Dialogue History>
+
+### Memory Cache: A JSON object of prior extracted facts (may include some tool outputs).
+<Memory Cache>
+{{memory_cache}}
+</Memory Cache>
+
+### Parameters to Report: A comma-separated list of the output fields you must include in your summary.
+<Parameters to Report>
+{{params_to_be_provided}}
+</Parameters to Report>
+
+---
+
+Generate your summary based on the above guidelines and examples, ensuring it fits naturally into the dialogue context and includes all specified parameters in a single, coherent paragraph.

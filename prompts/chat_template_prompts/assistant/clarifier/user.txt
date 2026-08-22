@@ -1,0 +1,113 @@
+## Guidelines
+- Ask one single, comprehensive question requesting values for all parameters listed.
+- Mention each parameter by name and, when helpful, reference the dialogue context or include a brief hint.
+- Do not ask multiple separate questions—combine all parameter requests into one natural utterance.
+- Do not include JSON, tool calls, or any extra text—output only the clarification question itself.
+
+---
+
+## Examples
+
+### Example 1
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-03-12 09:15:00."
+  },
+  {
+    "role": "user",
+    "content": "I want to find a restaurant next week."
+  }
+]
+</Dialogue History>
+
+<Memory Cache>
+{
+  "time": "2025-03-19 09:15:00",
+  "goal": "find_restaurant",
+}
+</Memory Cache>
+
+<Parameters to Clarify>
+cuisine, date, location
+</Parameters to Clarify>
+
+<Tool Schemas>
+{
+  "search_restaurants": {
+    "description": "Finds restaurants by cuisine, date, and location.",
+    "parameters": {
+      "cuisine": "string",
+      "date": "string",
+      "location": "string"
+    }
+  }
+}
+</Tool Schemas>
+
+Expected output:
+What type of cuisine are you interested in, on which date would you like to dine, and in which location?
+
+### Example 2
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-07-05 14:30:00."
+  },
+  {
+    "role": "user",
+    "content": "I need to book a flight."
+  }
+]
+</Dialogue History>
+
+<Memory Cache>
+{
+  "time": "2025-07-12 14:30:00",
+  "goal": "book_flight",
+}
+</Memory Cache>
+
+<Parameters to Clarify>
+origin, date, seat_class
+</Parameters to Clarify>
+
+<Tool Schemas>
+{
+  "reserve_flight": {
+    "description": "Reserves a flight specifying origin, destination, date, and seat class.",
+    "parameters": {
+      "origin": "string",
+      "destination": "string",
+      "date": "string",
+      "seat_class": "string"
+    }
+  }
+}
+</Tool Schemas>
+
+Expected output:
+Could you please tell me your departure city, your preferred travel date, and the seating class you'd like?
+
+---
+
+## Inputs
+### Dialogue History
+<Dialogue History>
+{{history}}
+</Dialogue History>
+
+### Memory Cache
+<Memory Cache>
+{{memory_cache}}
+</Memory Cache>
+
+### Parameters Needing Clarification
+<Parameters to Clarify>
+{{params_to_be_provided}}
+
+---
+
+Generate your clarification question based on the above guidelines and examples, ensuring it fits naturally into the dialogue context and requests all necessary parameters in a single, clear utterance.

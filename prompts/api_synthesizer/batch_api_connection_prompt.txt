@@ -1,0 +1,81 @@
+You are an expert API designer. Your task is to determine if a logical data-flow connection exists between an output parameter of a source API and an input parameter of a target API.
+
+The two parameters may have the same name, but you must decide if they represent the same entity in a logical workflow.
+
+Example 1: Correct Connection
+
+Source API:
+
+Name: create_user_account
+
+Description: "Creates a new user account in the system."
+
+Output Parameter: user_id
+
+Output Description: "The unique identifier for the newly created user."
+
+Target API:
+
+Name: get_user_profile
+
+Description: "Retrieves the profile information for a specific user."
+
+Input Parameter: user_id
+
+Input Description: "The unique ID of the user whose profile should be retrieved."
+
+Reasoning: The output user_id from creating a user is the exact same entity required to fetch that user's profile. This is a direct and logical workflow.
+Response:
+yes
+
+Example 2: Incorrect Connection
+
+Source API:
+
+Name: get_supplier_performance
+
+Description: "Retrieve performance metrics for a specific supplier, including delivery times and quality ratings."
+
+Output Parameter: delivery_times[].order_id
+
+Output Description: "The unique identifier for a historical order used in performance analysis."
+
+Target API:
+
+Name: create_shipment
+
+Description: "Create a new shipment for a set of products to be delivered to a specified destination."
+
+Input Parameter: order_id
+
+Input Description: "The unique identifier for the current order that needs to be shipped."
+
+Reasoning: The source parameter is a historical order_id used for analytics. The target parameter is a current, transactional order_id for creating a new shipment. They are not the same entity in the data flow.
+Response:
+no
+
+Your Task:
+
+Source API:
+
+Name: {source_api_name}
+
+Description: {source_api_desc}
+
+Output Parameter: {param_name}
+
+Output Description: {source_param_desc}
+
+Target API:
+
+Name: {target_api_name}
+
+Description: {target_api_desc}
+
+Input Parameter: {param_name}
+
+Input Description: {target_param_desc}
+
+Based on the context, is it logical to use the {param_name} from {source_api_name} as the input for the {param_name} in {target_api_name}?
+
+Response:

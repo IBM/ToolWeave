@@ -1,0 +1,109 @@
+## Guidelines
+- Always output exactly one  turn supplying all requested parameter values including sensitive information if applicable.
+- Double-check that you have provided values for *every* parameter listed in `<Parameters to Provide>` before submitting.
+- Whenever you mention a date, make sure to anchor it to the current time stated in the system prompt (the first system message), for example: "Current time: 2024-11-07 20:11:09".
+- Dates can be described in any clear, natural way - either as specific calendar dates ("July 12, 2025", "September 15th, 2024", "10th Mar 2025"), as relative expressions ("today", "tomorrow", "in two days", "a week later", "six months from now", "mid-January", etc.), or even a hybrid approach ("May 2025", "12th this month", "August 15th"), as long as the meaning is unmistakable.
+- Never include values for any other parameters not listed in `<Parameters to Provide>`, even if their values can be inferred from the dialogue history.
+- Ensure the response is coherent and fits naturally into the dialogue which might include sensitive information where appropriate.
+- Do not include any additional questions or commentary.
+- Never use placeholder tokens (e.g. `your_api_key`, `XXX`, `<secret>`) for sensitive data.
+- Do not add extra tags or markup beyond the single element.
+- Verify that the style and tone remain consistent even when including complex or sensitive information.
+- Phrase your utterance directing it to a digital assistant agent as if you were the user.
+
+---
+
+## Examples
+
+### Example 1 (Supplying Multiple Values)
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-04-02 11:20:00. Location: New York."
+  },
+  {
+    "role": "user",
+    "content": "I'd like to find some restaurants."
+  },
+  {
+    "role": "assistant",
+    "content": "Which type of cuisine are you interested in, and in which neighborhood should I look?"
+  }
+]
+</Dialogue History>
+
+<Parameters to Provide>
+cuisine, location
+</Parameters to Provide>
+
+<Relevant Tools Schema>
+{
+  "search_restaurants": {
+    "description": "Finds restaurants by cuisine and location.",
+    "parameters": {
+      "cuisine": "string",
+      "location": "string"
+    }
+  }
+}
+</Relevant Tools Schema>
+
+Expected output:
+I'd like Italian cuisine, please, and let's search around the Lower East Side.
+
+### Example 2 (Supplying a Single Value)
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-07-05 14:30:00. Location: Berlin."
+  },
+  {
+    "role": "user",
+    "content": "Show me trains from Berlin to Munich"
+  },
+  {
+    "role": "assistant",
+    "content": "What date would you like to travel?"
+  }
+]
+</Dialogue History>
+
+<Parameters to Provide>
+travel_date
+</Parameters to Provide>
+
+<Relevant Tools Schema>
+{
+  "search_trains": {
+    "description": "Retrieves available train schedules for a given departure station, arrival station, and travel date.",
+    "parameters": {
+      "departure": "string",
+      "destination": "string",
+      "travel_date": "string"
+    }
+    ...
+  }
+}
+</Relevant Tools Schema>
+
+Expected output:
+I'll be traveling on the 15th of this month.
+
+---
+
+## Inputs
+### Dialogue History: The full dialogue so far, including the assistant's last clarifying question (system, user, assistant messages and tool calls).
+<Dialogue History>
+{{history}}
+</Dialogue History>
+
+### Parameters to Provide: A comma-separated list of parameter names that the assistant has asked you to supply.
+<Parameters to Provide>
+{{params_to_be_provided}}
+</Parameters to Provide>
+
+---
+
+Generate a user utterance that naturally supplies all requested values based on the dialogue history and parameters provided. Ensure the response is coherent, fits naturally into the dialogue, and includes all required parameter values including sensitive information if applicable.

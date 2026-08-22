@@ -1,0 +1,89 @@
+You are an expert API designer creating a "fan-out" workflow for the '{domain_name}' domain. Your primary goal is to maximize connectivity from a single source API.
+
+The central "distributor" API that provides the initial data is:
+--- DISTRIBUTOR API ---
+{context_apis_json}
+--- END DISTRIBUTOR API ---
+
+The key output parameters available from the distributor API are:
+{available_output_params}
+
+**CRITICAL TASK:**
+Your task is to generate a list of **{NUMBER_OF_APIS_TO_GENERATE} distinct APIs** that represent parallel, downstream actions.
+1.  **Analyze the Distributor:** Look at the Distributor API and the output parameters it provides (e.g., `repository_id`).
+2.  **Brainstorm Parallel Actions:** Think of completely different, independent actions that a user would want to perform after getting this information (e.g., after getting a repository, a user could list commits, list issues, or check settings).
+3.  **Generate and Connect:** Create a new API for each of these actions. Every single one of these new APIs **MUST** take one of the key output parameters from the Distributor API as its primary input, using the **EXACT SAME NAME**. This is the most important rule.
+
+**CRITICAL INSTRUCTIONS:**
+1.  Each of these new APIs must perform a different, parallel action (e.g., after getting a `commit_id`, one API gets the diff, another gets the files, a third gets the comments).
+2.  Each new API MUST use the EXACT SAME NAME for the input parameter that connects to the distributor's output.
+3.  Follow all rules for creating realistic `results` and using `snake_case` names.
+4.  You MUST ensure every generated API object has a top-level `"type": "function"` key.
+
+--- EXAMPLE OF A GOOD FAN-OUT ---
+If the DISTRIBUTOR API was `get_repository`, which returns a `repository_id`, a good fan-out would be:
+[
+  {{
+    "type": "function",
+    "function": {{
+      "name": "list_repository_commits",
+      "description": "Lists all commits for the given repository.",
+      "parameters": {{ "properties": {{ "repository_id": {{ "type": "string" }} }} }}
+    }}
+  }},
+  {{
+    "type": "function",
+    "function": {{
+      "name": "list_repository_issues",
+      "description": "Lists all open issues for the given repository.",
+      "parameters": {{ "properties": {{ "repository_id": {{ "type": "string" }} }} }}
+    }}
+  }}
+]
+--- END EXAMPLE ---
+
+---
+
+### CRITICAL FORMATTING RULES
+
+**1. Enforce Enums**
+If a parameter (input or result) has a constrained set of string values (e.g., a status or category), define it using an enum.
+
+Example:
+```json
+"status": {{
+  "type": "string",
+  "description": "The current status of the order.",
+  "enum": ["pending", "shipped", "delivered", "cancelled"]
+}}
+```
+
+---
+
+**2. Use Date/Time Formats**
+Always specify the `format` for date or datetime fields.
+
+- For **dates only**: `"format": "date"` (e.g., `"2025-07-19"`)
+- For **timestamps**: `"format": "date-time"` (e.g., `"2025-07-19T10:30:00Z"`)
+
+Example:
+```json
+"creation_date": {{
+  "type": "string",
+  "description": "The creation timestamp of the resource in ISO 8601 format.",
+  "format": "date-time"
+}}
+```
+---
+
+**3. Logical Result Structure**
+Make sure result schemas logically reflect the action taken.
+
+- A **create/submit** function should return the new resource ID and a status.
+- A **search/list** function should return an array of objects.
+- DO NOT echo input parameters back in results.
+
+---
+
+Output ONLY a JSON list of the new API definitions.
+```json

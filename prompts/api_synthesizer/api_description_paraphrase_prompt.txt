@@ -1,0 +1,30 @@
+You are tasked with rewriting the following API description. Your goal is to improve clarity and align the output with the given writing style mode.
+
+---
+
+**Mode Options:**
+- `crisp`: Make the description short, direct, and easy to scan. Avoid extra background or context.
+- `verbose`: Make the description more detailed and formal. Add helpful context or elaboration while preserving the original meaning.
+
+---
+
+**Examples:**
+
+1. Original: "Get customer order details."
+   - Mode: crisp → "Retrieve order information."
+   - Mode: verbose → "Retrieve detailed information about a specific customer's order, including items, status, and delivery details."
+
+2. Original: "Delete a shipment."
+   - Mode: crisp → "Remove shipment."
+   - Mode: verbose → "Permanently delete a shipment from the logistics system, including all associated tracking records."
+
+---
+
+Now rewrite the following description using the given mode.
+
+- Mode: {mode}
+- Original Description: "{original_description}"
+
+Return only the rewritten description as a plain string (no formatting or quotes).
+
+**Rewritten Description:**

@@ -1,0 +1,182 @@
+# User Utterance Prompt
+
+## Overview
+You are emulating a user in a task-oriented dialogue. Given the conversation context, available tools, and a one-step plan, produce exactly one <user>...</user> utterance that naturally fills all required parameters.
+
+---
+
+## Instructions
+- The JSON schema for the tools only contain detailed definitions relevant to the parameters you need to provide.
+- Your `<user>` turn must include a realistic value for *each and every* parameter listed - no omissions.
+- If `<Parameters to Provide>` is `None`, do not provide any actual parameters in your utterance. Instead, generate a request that is very similar to the plan description.
+- Base your turn only on the current plan and on the existing dialogue context, weaving in any relevant details — past tool results, previously supplied slots or preferences — so your utterance feels like a true continuation.
+- The utterance should include each and every task mentioned in the `<Upcoming Plan>` section and it should look more like a natural user request that incorporates the required parameters values in this plan.
+- Wrap your entire response in <user>...</user> and no extra text.
+- Provide actual realistic values for all parameter fields mentioned in `<Parameters to Provide>`, phrased naturally including sensitive information if applicable.
+- Never include values for any parameters not explicitly listed in `<Parameters to Provide>`, regardless of their presence anywhere else in the dialogue history.
+- Do not reference parameter placeholders - supply real values in context that actually fit the dialogue and make sense.
+- This goes even for sensitive information like API keys, passwords, or personal data - they should be included in a natural way.
+- Before using any date expression, explicitly refer to the current time provided in the system prompt (first element in the system prompt) (e.g., "Current time: 2025-07-24 11:39:21") to ground your response.
+- When expressing dates, you may use any humanized format: calendar dates ("12 July 2025," "Sep 15th, 2024," "10th Mar 2025"), natural relative expressions ("today," "yesterday," "tomorrow," "2 days ago," "a week later," "6 months from now," "mid-January," etc.), or even a hybrid approach ("May 2025", "12th this month", "August 15th"), as long as the intended time remains clear and unambiguous.
+- When specifying a time interval, keep it within one week before or after the current time. Use any natural language phrasing that suits the context, such as "next week," "in two days," "tomorrow," etc.
+- Generate the utterance in a way as if you were the user and addressing a digital assistant agent directly.
+
+## Additional Guidelines for Sensitive Values
+- Never use empty placeholders like `your_api_key`, `XXX`, or `<secret>`.
+- You can supply shorter, alphanumeric‐style values as long as they look realistic (e.g. `myApiKey123`, `secretPass456`).
+
+### Negative vs. Positive Examples
+
+#### Bad (unused placeholders)
+<user>Here's my API key: your_api_key and my password is <secret>.</user>
+
+#### Good (realistic values)
+<user>I'm using API key myApiKey123 and my password is secretPass456.</user>
+
+---
+
+## Examples
+
+### Example 1 (First Turn)
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-03-12 09:15:00. Location: San Francisco."
+  }
+]
+</Dialogue History>
+
+<Relevant Tools Schema>
+{
+  "type": "function",
+  "function": {
+    "name": "search_restaurants",
+    "description": "Finds restaurants by cuisine, date, and location",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "cuisine": {
+          "type": "string",
+          "description": "Type of cuisine to search for"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location to search for restaurants"
+        }
+      },
+      "required": ["cuisine", "location"]
+    }
+  }
+}
+</Relevant Tools Schema>
+
+<Parameters to Provide>
+cuisine, location
+</Parameters to Provide>
+
+<Upcoming Plan>
+User wants to search for a type of restaurant in a given area.
+</Upcoming Plan>
+
+Expected output:
+<user>Hey, can you find some Italian restaurants near me in San Francisco?</user>
+
+### Example 2 (Follow-Up)
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-07-05 14:30:00. Location: Berlin."
+  },
+  {
+    "role": "user",
+    "content": "Show me trains from Berlin to Munich 5 days from now."
+  },
+  {
+    "role": "assistant_tool_call",
+    "content": "Calling search_trains with parameters: {\"from\":\"Berlin\",\"to\":\"Munich\",\"date\":\"2025-07-10\"}"
+  },
+  {
+    "role": "tool",
+    "content": "{\"trains\":[{\"train_no\":\"ICE100\",\"depart\":\"09:00\",\"arrive\":\"12:00\",\"price\":45}]}"
+  },
+  {
+    "role": "assistant",
+    "content": "Here's one option: ICE100 departs at 9 AM for €45."
+  }
+]
+</Dialogue History>
+
+<Relevant Tools Schema>
+{
+  "type": "function",
+  "function": {
+    "name": "reserve_train",
+    "description": "Reserves a train ticket",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "train_no": {
+          "type": "string",
+          "description": "Train number to reserve"
+        }
+      },
+      "required": ["train_no"]
+    }
+  }
+}
+</Relevant Tools Schema>
+
+<Parameters to Provide>
+train_no
+</Parameters to Provide>
+
+<Upcoming Plan>
+User wants to reserve the displayed train.
+</Upcoming Plan>
+
+Expected output:
+<user>Great, let's go ahead and reserve ICE100 for me.</user>
+
+---
+
+## Final Guidelines
+- Always output exactly one `<user>...</user>` turn that fulfills the current single-step plan. Do not include any other text.
+- If `<Parameters to Provide>` is `None`, do not provide any actual parameters in your utterance. Instead, generate a request that is very similar to the plan description.
+- The entire goal of the plan in the `<Upcoming Plan>` section should be reflected in your utterance with all required parameters filled in naturally into the plan.
+- Provide values for all parameters that need to be specified in the current step (mentioned in the `<Parameters to Provide>` section), phrased naturally including sensitive information if applicable.
+- Never include values for any other parameters not listed in `<Parameters to Provide>`, even if their values can be inferred from the dialogue history.
+- Never use placeholder tokens (e.g. `your_api_key`, `XXX`, `<secret>`) for sensitive data; always provide realistic, production-style values.
+- Verify that the style and tone remain consistent even when including complex or sensitive information.
+- Whenever you mention a date, make sure to anchor it to the current time stated in the system prompt (the first system message), for example: "Current time: 2024-11-07 20:11:09".
+- Dates can be described in any clear, natural way - either as specific calendar dates ("July 12, 2025", "September 15th, 2024", "10th Mar 2025"), as relative expressions ("today", "tomorrow", "in two days", "a week later", "six months from now", "mid-January", etc.), or even a hybrid approach ("May 2025", "12th this month", "August 15th"), as long as the meaning is unmistakable.
+- Whenever you are expected to give a time interval, do not go beyond a week on either side of the current time. Feel free to use any natural language expression that fits the context, such as "next week", "in two days", "tomorrow", etc.
+- Phrase your utterance directing it to a digital assistant agent as if you were the user.
+
+---
+
+## Inputs
+### Dialogue History: The full dialogue so far (system, user, assistant messages and tool calls).
+<Dialogue History>
+{{history}}
+</Dialogue History>
+
+### Relevant Tools Schema: JSON definitions of available functions with detailed descriptions only for relevant parameters.
+<Relevant Tools Schema>
+{{tool_definitions}}
+</Relevant Tools Schema>
+
+### Parameters to Provide: A comma-separated list of parameter names that must appear in your utterance. Your utterance must include realistic values for each of these parameters.
+<Parameters to Provide>
+{{params_to_be_provided}}
+</Parameters to Provide>
+
+### Upcoming Plan: A brief description of the next user intent or action.
+<Upcoming Plan>
+{{curr_plan_desc}}
+</Upcoming Plan>
+
+---
+
+## Output

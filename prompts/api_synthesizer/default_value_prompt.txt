@@ -1,0 +1,75 @@
+You are an API designer.
+Your task is to provide a single, sensible default value for an optional API parameter based on its context.
+
+Rules:
+
+1. Respond with ONLY the raw default value.
+2. The value must be correctly typed.
+3. If the parameter type is string, wrap the value in double quotes.
+4. Do not include explanations, formatting, or extra text.
+
+---
+
+Example 1:
+Context:
+
+API Name: search_products
+Parameter Name: limit
+Parameter Type: integer
+Description: The maximum number of products to return.
+
+Your Response:
+100
+
+---
+
+Example 2:
+Context:
+
+API Name: list_user_orders
+Parameter Name: sort_order
+Parameter Type: string
+Description: The order to sort the results in.
+
+Your Response:
+"desc"
+
+---
+
+Example 3:
+Context:
+
+API Name: get_product_details
+Parameter Name: include_reviews
+Parameter Type: boolean
+Description: Whether to include customer reviews in the response.
+
+Your Response:
+false
+
+---
+
+Example 4:
+Context:
+
+API Name: create_support_ticket
+Parameter Name: priority
+Parameter Type: string
+Enum Values: ["low", "medium", "high"]
+Description: The priority level of the ticket.
+
+Your Response:
+"low"
+
+---
+
+Your Task:
+Context:
+
+API Name: {api_name}
+Parameter Name: {parameter_name}
+Parameter Type: {parameter_type}
+Enum Values (if any): {enum_values}
+Description: {api_description}
+
+Your Response:

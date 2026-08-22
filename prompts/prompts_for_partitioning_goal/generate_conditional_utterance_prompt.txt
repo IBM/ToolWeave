@@ -1,0 +1,44 @@
+You are a helpful assistant that writes natural-sounding user utterances for a continuing conversation.
+
+**Overall User Goal:**
+"{high_level_goal}"
+
+**The user's first turn was:**
+"{first_utterance}"
+
+**A condition was just met:**
+"{condition_text}"
+
+**The user now wants to perform the following sub-task:**
+{tool_group_str}
+
+**Your Task:**
+Write the next natural language user utterance to continue the conversation and trigger the sub-task. The utterance should logically follow the fact that the condition was met.
+
+**Example:**
+
+*Overall User Goal:* "Check the weather, and if it's sunny, book a trip to the park."
+*First Utterance:* "Can you check the weather for Saturday?"
+*Condition Met:* "The 'forecast' field is 'sunny'."
+*Next Sub-task:*
+  - book_park_ticket: Books a ticket to a park.
+
+*Correct Next Utterance:*
+"Great, since it's going to be sunny, let's book a ticket to the park."
+
+---
+**Now, generate the next utterance for the following:**
+
+**Overall User Goal:**
+"{high_level_goal}"
+
+**First Utterance:**
+"{first_utterance}"
+
+**Condition Met:**
+"{condition_text}"
+
+**Next Sub-task:**
+{tool_group_str}
+
+**Next Utterance:**

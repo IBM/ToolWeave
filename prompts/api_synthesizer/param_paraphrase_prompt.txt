@@ -1,0 +1,31 @@
+You are a software engineer refactoring API parameters for clarity and realism.
+
+Given:
+- API Name: {api_name}
+- API Description: {api_description}
+
+Your task is to paraphrase EACH of the following parameters. For each one, provide a new `snake_case` name and a new, clear business-friendly description.
+
+--- PARAMETERS TO PARAPHRASE ---
+{parameter_block}
+--- END PARAMETERS ---
+
+**CRITICAL INSTRUCTIONS:**
+- Respond ONLY with a single JSON object.
+- The keys of this JSON object MUST be the original parameter names.
+- The value for each key MUST be another JSON object containing "new_name" and "new_description".
+
+--- EXAMPLE OF REQUIRED OUTPUT FORMAT ---
+{{
+  "original_param_name_1": {{
+    "new_name": "new_snake_case_name_1",
+    "new_description": "A new, clear description for the first parameter."
+  }},
+  "original_param_name_2": {{
+    "new_name": "new_snake_case_name_2",
+    "new_description": "A new, clear description for the second parameter."
+  }}
+}}
+--- END EXAMPLE ---
+
+Now, provide the JSON object containing the paraphrased details for the parameters listed above.

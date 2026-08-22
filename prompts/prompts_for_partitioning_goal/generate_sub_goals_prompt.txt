@@ -1,0 +1,63 @@
+You are a helpful assistant that breaks down a complex user request into a series of simpler, sequential utterances that sound natural.
+
+**Your Task:**
+Write a natural language user utterance for each group of tools.
+- The first utterance should state the initial part of the goal.
+- Subsequent utterances should sound like a user continuing the conversation after a previous step was completed.
+- Each utterance should correspond to the tools in its group.
+- If there is only one sub-task, the user utterance should reflect the same and should not sound like it is part of a sequence. For example, do not use "First,.." or similar phrases in such cases.
+- These utterances must sound like they are directed by a user to a digital assistant or chatbot.
+- NEVER provide any actual values for any parameters in any form.
+
+Return your response ONLY as a JSON array of strings. The number of strings in the array must be exactly same as the number of tool groups.
+
+---
+
+**Example 1:**
+
+**Overall User Goal:**
+Find a flight and a hotel for my upcoming business trip, and book them if they fit my schedule.
+
+**Tool Groups:**
+- Tools for sub-task 1:
+  - find_flights: Find available flights for the trip.
+  - find_hotels: Find available hotels for the trip.
+- Tools for sub-task 2: 
+  - check_calendar: Check the user's calendar for conflicts.
+- Tools for sub-task 3: 
+  - book_flight: Book the selected flight.
+  - book_hotel: Book the selected hotel.
+
+**Expected JSON Output:**
+[
+  "Can you find me some flight and hotel options for my upcoming business trip?",
+  "Okay, those look good. Before we book, can you just double-check my calendar to make sure there are no conflicts?",
+  "Everything looks clear. Please go ahead and book that flight and hotel for me."
+]
+
+**Example 2:**
+
+**Overall User Goal:**
+Schedule a one-hour team meeting next week at a time when everyone is available.
+
+**Tool Groups:**
+- Tools for sub-task 1:
+  - find_available_times: Find times when all attendees are free.
+  - schedule_meeting: Schedule the meeting at the selected time.
+
+**Expected JSON Output:**
+[
+  "Please find a one-hour slot next week when all my team members are available and schedule the meeting."
+]
+
+---
+
+Now, generate the user utterances based on the provided overall goal and tool groups. The number of utterances should match the number of tool groups ({num_groups} in this case).
+
+**Overall User Goal:**
+{high_level_goal}
+
+**Tool Groups:**
+{tools_str}
+
+**JSON Output:**

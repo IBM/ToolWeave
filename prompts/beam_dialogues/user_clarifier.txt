@@ -1,0 +1,176 @@
+# User Clarification Response Prompt
+
+## Overview
+You are emulating a user who is responding to the assistant's clarification requests in a task-oriented dialogue. Given the conversation context, available tools, and a list of parameters the assistant has just asked for, produce exactly one <user>...</user> utterance that naturally supplies all the requested values including sensitive information if applicable.
+
+---
+
+## Instructions
+- The JSON schema for the tools only contain detailed definitions relevant to the parameters you need to provide.
+- Your `<user>` turn must include a realistic value for *each and every* parameter listed - no omissions.
+- Output exactly one <user> turn that answers the assistant's clarification by providing values for every listed parameter including sensitive information if applicable.
+- Phrase the values naturally, as part of a coherent sentence or short statement.
+- Wrap your entire response in <user>...</user> with no extra text outside these tags.
+- Base your response solely on the dialogue history, tool definitions, and parameters to provide.
+- Never include values for any parameters not explicitly listed in `<Parameters to Provide>`, regardless of their presence anywhere else in the dialogue history.
+- Before using any date expression, explicitly refer to the current time provided in the system prompt (first element in the system prompt) (e.g., "Current time: 2025-07-24 11:39:21") to ground your response.
+- When expressing dates, you may use any humanized format: calendar dates ("12 July 2025," "Sep 15th, 2024," "10th Mar 2025"), natural relative expressions ("today," "yesterday," "tomorrow," "2 days ago," "a week later," "6 months from now," "mid-January," etc.), or even a hybrid approach ("May 2025", "12th this month", "August 15th"), as long as the intended time remains clear and unambiguous.
+- Phrase the values naturally, as part of a coherent sentence or short statement.
+- This goes even for sensitive information like API keys, passwords, or personal data - they should be included in a natural way.
+- Do not ask further questions or introduce new parameters.
+- Generate the utterance in a way as if you were the user and addressing a digital assistant agent directly.
+
+## Additional Guidelines for Sensitive Values
+- Never use placeholders like `your_api_key`, `XXX`, or `<secret>`.
+- You can supply shorter, alphanumeric‐style values as long as they look realistic (e.g. `myApiKey123`, `secretPass456`).
+
+### Negative vs. Positive Examples
+
+#### Bad (unused placeholders)
+<user>Here's my API key: your_api_key and my password is <secret>.</user>
+
+#### Good (realistic values)
+<user>I'm using API key myApiKey123 and my password is secretPass456.</user>
+
+---
+
+## Examples
+
+### Example 1 (Supplying Multiple Values)
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-04-02 11:20:00. Location: New York."
+  },
+  {
+    "role": "user",
+    "content": "I'd like to find some restaurants."
+  },
+  {
+    "role": "assistant",
+    "content": "Which type of cuisine are you interested in, and in which neighborhood should I look?"
+  }
+]
+</Dialogue History>
+
+<Relevant Tools Schema>
+{
+  "type": "function",
+  "function": {
+    "name": "search_restaurants",
+    "description": "Finds restaurants by cuisine, date, and location",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "cuisine": {
+          "type": "string",
+          "description": "Type of cuisine to search for"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location to search for restaurants"
+        }
+      },
+      "required": ["cuisine", "location"]
+    }
+  }
+}
+</Relevant Tools Schema>
+
+<Parameters to Provide>
+cuisine, location
+</Parameters to Provide>
+
+Expected output:
+<user>I'd like Italian cuisine, please, and let's search around the Lower East Side.</user>
+
+### Example 2 (Supplying a Single Value)
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-07-05 14:30:00. Location: Berlin."
+  },
+  {
+    "role": "user",
+    "content": "Show me trains from Berlin to Munich"
+  },
+  {
+    "role": "assistant",
+    "content": "What date would you like to travel?"
+  }
+]
+</Dialogue History>
+
+<Relevant Tools Schema>
+{
+  "type": "function",
+  "function": {
+    "name": "search_trains",
+    "description": "Finds trains between two locations on a specific date",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Departure location"
+        },
+        "to": {
+          "type": "string",
+          "description": "Arrival location"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Travel date in YYYY-MM-DD format"
+        }
+      },
+      "required": ["from", "to", "date"]
+    }
+  }
+}
+</Relevant Tools Schema>
+
+<Parameters to Provide>
+travel_date
+</Parameters to Provide>
+
+Expected output:
+<user>I'll be traveling on the 15th of this month.</user>
+
+---
+
+## Final Guidelines
+- Always output exactly one <user> turn supplying all requested parameter values including sensitive information if applicable.
+- Never include values for any other parameters not listed in `<Parameters to Provide>`, even if their values can be inferred from the dialogue history.
+- Ensure the response is coherent and fits naturally into the dialogue which might include sensitive information where appropriate.
+- Do not include any additional questions or commentary.
+- Wrap your entire response in <user>...</user> tags and do not include any extra text.
+- Never use placeholder tokens (e.g. `your_api_key`, `XXX`, `<secret>`) for sensitive data.
+- Whenever you mention a date, make sure to anchor it to the current time stated in the system prompt (the first system message), for example: "Current time: 2024-11-07 20:11:09".
+- Dates can be described in any clear, natural way - either as specific calendar dates ("July 12, 2025", "September 15th, 2024", "10th Mar 2025"), as relative expressions ("today", "tomorrow", "in two days", "a week later", "six months from now", "mid-January", etc.), or even a hybrid approach ("May 2025", "12th this month", "August 15th"), as long as the meaning is unmistakable.
+- Verify that the style and tone remain consistent even when including complex or sensitive information.
+- Phrase your utterance directing it to a digital assistant agent as if you were the user.
+
+---
+
+## Inputs
+### Dialogue History: The full dialogue so far, including the assistant's last clarifying question (system, user, assistant messages and tool calls).
+<Dialogue History>
+{{history}}
+</Dialogue History>
+
+### Relevant Tools Schema: JSON definitions of available functions with detailed descriptions only for relevant parameters.
+<Relevant Tools Schema>
+{{tool_definitions}}
+</Relevant Tools Schema>
+
+### Parameters to Provide: A comma-separated list of parameter names that the assistant has asked you to supply.
+<Parameters to Provide>
+{{params_to_be_provided}}
+</Parameters to Provide>
+
+---
+
+## Output

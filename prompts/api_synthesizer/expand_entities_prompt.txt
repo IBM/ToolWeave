@@ -1,0 +1,117 @@
+You are an expert API designer tasked with expanding an SDK for the '{domain_name}' domain by adding new, interconnected functionalities.
+
+Your goal is to bridge the gap between the high-level domain information and the already-existing APIs by introducing new, relevant entities.
+
+--- HIGH-LEVEL DOMAIN INFORMATION ---
+{domain_info}
+--- END DOMAIN INFORMATION ---
+
+Here are the APIs that have ALREADY been created. Notice the entities they cover and the outputs they produce.
+--- EXISTING APIS (Context) ---
+{context_apis_json}
+--- END EXISTING APIS ---
+
+**CRITICAL TASK:**
+Your task is to generate **{NUMBER_OF_APIS_TO_GENERATE} new APIs** by following this process:
+1.  **Analyze and Identify Gaps:** Read the "HIGH-LEVEL DOMAIN INFORMATION" and identify key entities or concepts that are NOT yet covered by the "EXISTING APIS".
+2.  **Generate and Connect:** For each identified gap, create a new API. This new API **MUST** be connected to the existing SDK by accepting an output parameter from one of the "EXISTING APIS" as an input. This is the most important rule.
+
+**EXAMPLE THOUGHT PROCESS:**
+-   *Analysis:* "The domain info mentions 'managing user profiles', but the existing APIs only have a `get_order`. The `get_order` API returns a `customer_id`."
+-   *Generation:* "I will create a new API called `get_customer_profile` that takes `customer_id` as an input to cover the missing 'user profile' entity."
+
+---
+
+### CRITICAL FORMATTING RULES
+
+**1. Enforce Enums**
+If a parameter (input or result) has a constrained set of string values (e.g., a status or category), define it using an enum.
+
+Example:
+```json
+"status": {{
+  "type": "string",
+  "description": "The current status of the order.",
+  "enum": ["pending", "shipped", "delivered", "cancelled"]
+}}
+```
+
+---
+
+**2. Use Date/Time Formats**
+Always specify the `format` for date or datetime fields.
+
+- For **dates only**: `"format": "date"` (e.g., `"2025-07-19"`)
+- For **timestamps**: `"format": "date-time"` (e.g., `"2025-07-19T10:30:00Z"`)
+
+Example:
+```json
+"creation_date": {{
+  "type": "string",
+  "description": "The creation timestamp of the resource in ISO 8601 format.",
+  "format": "date-time"
+}}
+```
+
+---
+
+**3. Use Snake Case**
+Use `snake_case` for all function names and parameter names.
+**Never** include the domain name in function names.
+Example: `search_items`
+Wrong: `domain_search_items`
+
+---
+
+**4. Provide Clear Descriptions**
+Every function, parameter, and response field **must have** a meaningful description.
+
+- Use a mix of **short** and **long** descriptions across different APIs.
+- This mirrors real-world API SDK design patterns.
+
+---
+
+**5. Logical Result Structure**
+Make sure result schemas logically reflect the action taken.
+
+---
+
+- A **create/submit** function should return the new resource ID and a status.
+- A **search/list** function should return an array of objects.
+- DO NOT echo input parameters back in results.
+
+---
+
+6.**Enforce Connectivity:** Every new API must have at least one input parameter that is an output of an API in the "EXISTING APIS" context.
+
+**7. Enforce required Field**
+The parameters object MUST ALWAYS contain a required field.
+- If one or more parameters are essential for the API to function, list their names in the required array.
+
+---
+
+**8. Enforce Consistent Naming for Common Entities**
+To ensure that APIs can be easily connected, use standardized, common names for parameters that represent the same core entity. An ID that is an output of one function should have the **exact same name** if it is used as an input to another.
+
+* **Correct Example:**
+    * `create_user` (output) -> `user_id`
+    * `get_user_details` (input) -> `user_id`
+
+* **Incorrect Example:**
+    * `create_order` (output) -> `order_identifier`
+    * `track_order` (input) -> `order_ref`
+
+* **Correct Example:**
+    * `calculate_area` (output) -> `area`
+    * `calculate_volume` (input) -> `area`
+
+* **Correct Example:**
+    * `find_files` (output) -> `file_path`
+    * `get_file_permissions` (input) -> `file_path`
+
+**Use common identifiers like `user_id`, `product_id`, `order_id`, `session_id`, etc., consistently across all generated APIs.**
+
+---
+
+Now, generate the new, connected APIs. Output ONLY a JSON list.
+```json

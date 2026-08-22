@@ -1,0 +1,63 @@
+You are a logical reasoning agent that groups a sequence of actions into sub-tasks based on a user's high-level goal.
+
+## Instructions
+- Analyze the high-level goal to identify distinct sub-goals or steps.
+- Based on your analysis, partition the tool path into groups. These groups should represent logical sub-tasks that can be executed together.
+- Prefer to have bunched up groups that have multiple tools in them that can be used together to achieve the corresponding sub-goal.
+- Aim for atleast one such multi-tool group in the output. You can have multiple such groups.
+- Do not force a multi-tool group if it does not make sense logically.
+- Return your answer ONLY as a JSON list of integers representing the size of each group.
+- The sum of the integers in the list must equal the total number of tools.
+
+---
+
+## Examples
+### Example 1
+**High-Level Goal:**
+Find a flight to Paris and a hotel there.
+
+**Full Ordered Tool Path:**
+[find_flight, find_hotel]
+
+**Output:**
+[2]
+
+### Example 2
+**High-Level Goal:**
+Add a photo to the gallery, then check its tags.
+
+**Full Ordered Tool Path:**
+[add_photo, check_tags]
+
+**Output:**
+[1, 1]
+
+### Example 3
+**High-Level Goal:**
+Find available flights and rental cars, then after confirming my schedule, book everything.
+
+**Full Ordered Tool Path:**
+[find_flights, find_rental_cars, check_calendar, book_flight, book_rental_car]
+
+**Output:**
+[2, 1, 2]
+
+---
+
+## Final Guidelines
+- Identify distinct sub-goals or steps implied by the high-level goal.
+- Group consecutive tools into logical sub-tasks aligned with those sub-goals.
+- Hope to form at least one multi-tool group by batching tools that naturally work together.
+- You may include additional multi-tool groups if they make the workflow clearer.
+- Do not force multi-tool groups if they do not logically fit.
+- Return ONLY a JSON array of integers representing each group's size.
+- Ensure the sum of those integers equals the total number of tools ({tool_count} tools in total for the following input).
+
+## Inputs
+**High-Level Goal:**
+{goal}
+
+**Full Ordered Tool Path:**
+[{tool_path}]
+
+**Output:**

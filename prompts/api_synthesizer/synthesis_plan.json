@@ -1,0 +1,29 @@
+{
+  "steps": [
+    {
+      "name": "seed_generation",
+      "prompt_path": "prompts/api_synthesizer/seed_apis_prompt.txt",
+      "num_to_generate": 8
+    },
+    {
+      "name": "expand_entities",
+      "prompt_path": "prompts/api_synthesizer/expand_entities_prompt.txt",
+      "num_to_generate": 8
+    },
+    {
+      "name": "add_complexity",
+      "prompt_path": "prompts/api_synthesizer/complexify_prompt.txt",
+      "num_to_generate": 5
+    },
+    {
+      "name": "add_connectivity",
+      "prompt_path": "prompts/api_synthesizer/connectivity_prompt.txt",
+      "num_to_generate": 8
+    },
+    {
+      "name": "fan_out",
+      "prompt_path": "prompts/api_synthesizer/pattern_fan_out_prompt.txt",
+      "num_parallel_apis": 5
+    }
+  ]
+}

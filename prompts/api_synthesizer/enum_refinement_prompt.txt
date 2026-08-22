@@ -1,0 +1,20 @@
+You are an API designer. For the following API function, suggest a JSON list of 3 to 5 appropriate enum values for the parameter '{parameter_name}'.
+
+API Name: {api_name}
+API Description: {api_description}
+Parameter Name: {parameter_name}
+Parameter Description: {parameter_description}
+
+Based on the context, what are the most likely enum values for '{parameter_name}'?
+
+Here are some examples of good responses:
+
+For a parameter named 'status': ["pending", "processing", "completed", "failed"]
+
+For a parameter named 'product_category': ["electronics", "apparel", "home_goods", "books"]
+
+For a parameter named 'priority_level': ["low", "medium", "high", "critical"]
+
+For a parameter named 'shipment_type': ["standard", "express", "overnight"]
+
+Return ONLY a valid JSON list of strings.

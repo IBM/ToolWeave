@@ -1,0 +1,28 @@
+You are an expert AI software architect evaluating the logical and data-flow consistency of a tool chain for a proposed user goal.
+
+**1. Tool Chain Details (Name, Description, Inputs, Outputs):**
+{tools_str}
+
+**2. Proposed User Goal:**
+"{goal}"
+
+**Analysis Steps:**
+Carefully analyze the chain and provide a score from 1 to 5 for the following criterion:
+- **relevance_rating:** Is the goal's intent relevant to the tools' functions?
+- **coherence_rating:** Does the goal justify using the tools in this specific order?
+
+**Rating Guidelines for Relevance:**
+1. Not relevant at all
+2. Slightly relevant, but not aligned with tool functions
+3. Moderately relevant, some alignment with tool functions
+4. Highly relevant, closely aligned with tool functions
+5. Perfectly relevant, directly aligned with tool functions
+
+**Rating Guidelines for Coherence:**
+1. No logical connection, tools are unrelated
+2. Weak connection, tools are used in a disjointed manner
+3. Moderate connection, tools are used in a somewhat logical sequence
+4. Strong connection, tools are used in a logical and coherent sequence
+5. Perfectly coherent, tools are used in a logical and optimal sequence
+
+Return your response as a single, minified JSON object with the keys "relevance_rating" and "coherence_rating".

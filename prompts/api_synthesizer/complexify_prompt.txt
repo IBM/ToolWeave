@@ -1,0 +1,56 @@
+You are an expert API designer tasked with expanding an SDK for the '{domain_name}' domain by adding new, complex, and interconnected APIs.
+
+--- HIGH-LEVEL DOMAIN INFORMATION ---
+{domain_info}
+--- END DOMAIN INFORMATION ---
+
+Here are the APIs that have ALREADY been created.
+--- EXISTING APIS (Context) ---
+{context_apis_json}
+--- END EXISTING APIS ---
+
+**CRITICAL TASK:**
+Your task is to generate **{NUMBER_OF_APIS_TO_GENERATE} new APIs** that add sophisticated functionality to the SDK. For each new API, you must follow this process:
+1.  **Find a Connection Point:** First, identify a key output parameter from one of the "EXISTING APIS" that can serve as an input for a new, more complex operation.
+2.  **Generate a Complex and Connected API:** Create a new API that is connected to the existing SDK by accepting that output parameter as an input. This new API **MUST** also meet the following criteria for complexity:
+    * It must have **at least 4 input parameters**.
+    * It must use a **nested object or an array** in its parameters.
+    * It must include a mix of data types (e.g., string, integer, boolean, enum).
+    * It should have optional fields, some with default values.
+
+---
+
+### CRITICAL FORMATTING RULES
+
+**1. Enforce Enums**
+If a parameter (input or result) has a constrained set of string values (e.g., a status or category), define it using an enum.
+
+Example:
+```json
+"status": {{
+  "type": "string",
+  "description": "The current status of the order.",
+  "enum": ["pending", "shipped", "delivered", "cancelled"]
+}}
+```
+
+---
+
+**2. Use Date/Time Formats**
+Always specify the `format` for date or datetime fields.
+
+- For **dates only**: `"format": "date"` (e.g., `"2025-07-19"`)
+- For **timestamps**: `"format": "date-time"` (e.g., `"2025-07-19T10:30:00Z"`)
+
+Example:
+```json
+"creation_date": {{
+  "type": "string",
+  "description": "The creation timestamp of the resource in ISO 8601 format.",
+  "format": "date-time"
+}}
+```
+---
+
+Now, generate the new, complex, and connected APIs. Output only a JSON list.
+```json

@@ -1,0 +1,79 @@
+You are asked to evaluate some synthetic dialogue data. These synthetic dialogue occur between the user, the AI assistant, and the tool. Please evaluate the data based on the following criteria, assigning a score from 1 to 5 for each category. Use the detailed descriptions below to guide your assessment:
+
+- Naturalness (1-5 points): Only evaluate whether the user's request and response is natural and realistic. Focus more on the natural flow of the conversation and less on the choice of words. For example, pay attention to whether users will ask similar questions in real scenarios. And assess whether user behavior is natural. For example, real users rarely ask similar questions consecutively or ask longer questions.
+
+- Coherence (1-5 points): Evaluate the overall flow and logical connection between the turns in the conversation. Focus on checking whether the user's previous and subsequent rounds of requests are relevant. Also, ensure that meaningful order of agent interactions is maintained. For example, the agent should not provide information before the user requests it. Similarly, the relevant tools must be invoked only after the assistant calls the tool with the relevant parameters. Such discrepancies should be heavily penalized.
+
+- Helpfulness (1-5 points): Determine the effectiveness and value of the AI assistant's responses in addressing the user's needs.
+
+- Accuracy (1-5 points): Check for the accuracy and consistency of the information provided. Everything returned by the tool is assumed to be accurate. However, at the same time, if the assistant hallucinates or makes up information, it should be heavily penalized.
+
+Below are some examples that are rated poorly in each category:
+
+1. Naturalness:
+- User: "Can you tell me about the weather?"
+- Assistant: "The weather is nice."
+- User: "What about tomorrow?"
+- Assistant: "Tomorrow will be nice too."
+
+2. Coherence:
+- User: "What's the capital of France?"
+- Assistant: "The capital of France is Paris."
+- User: "And the capital of Germany?"
+- Assistant: "The capital of Germany is Berlin."
+
+3. Helpfulness:
+- User: "I need help with my homework."
+- Assistant: "What subject is it?"
+- User: "Math."
+- Assistant: "Okay."
+
+4. Accuracy:
+- User: "What's the capital of Italy?"
+- Assistant: "The capital of Italy is Rome."
+- User: "What's the capital of Spain?"
+- Assistant: "The capital of Spain is Barcelona."
+
+Some more examples specifically catered to tool usage:
+1. Coherence: (Tool simulated before assistant provides tool to be called along with its input parameters)
+- User: "Can you raise a ticket for my internet issue?"
+- Tool: {"ticket_id": "12345"}
+
+2. Coherence: (Assistant goes on rambling trying to correct erroneous tool output but never calls the tool)
+- User: "Please book a flight for me."
+- Assistant: "Sure, I can help you with that. Can you please provide me with the details of your flight?"
+- User: "I need a flight from New York to San Francisco on March 10th."
+- Assistant: book_flight({"from": "New York", "to": "San Francisco", "date": "March 10th"})
+- Tool: "Flight ID not found."
+- Assistant: "I apologize for the inconvenience. It seems that there was an error with the flight ID. Let me try again."
+- Tool: "Flight ID not found."
+
+3. Coherence: (Assistant talks about calling tool but does not use the required tool-calling format)
+- User: "Can you check the weather for me?"
+- Assistant: "Sure, I can help you with that. Let me check the weather for you."
+- Tool: {"temperature": "72°F", "condition": "Sunny"}
+- Assistant: "The weather is 72°F and sunny."
+
+4. Accuracy: (Assistant hallucinates information)
+- User: "Can you reserve a table for two at an Italian restaurant in New York City for tomorrow night?"
+- Assistant: "Sure, I have reserved a table for two at 'Luigi's Italian Bistro' in New York City for tomorrow night at 7 PM."
+
+All such examples must be heavily penalized, and the scores they receive should be 1 or 2.
+
+Please use a more **CRITICAL** and **STRICT** evaluation method. After scoring, please provide brief comments or feedback for each category to explain your ratings.
+
+Please provide your evaluation in the following format:
+
+Evaluation of Synthetic Dialogue Data
+
+1. Naturalness: [Score] / 5
+- Comments: [Brief comments or feedback]
+
+2. Coherence: [Score] / 5
+- Comments: [Brief comments or feedback]
+
+3. Helpfulness: [Score] / 5
+- Comments: [Brief comments or feedback]
+
+4. Accuracy: [Score] / 5
+- Comments: [Brief comments or feedback]

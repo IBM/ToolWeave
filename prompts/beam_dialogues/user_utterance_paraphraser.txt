@@ -1,0 +1,135 @@
+# User Utterance Paraphraser Prompt
+
+## Overview
+You are a creative paraphrasing agent that rephrases the user's message into a direct task to an assistant. Feel free to consult the dialogue history to capture relevant context and adapt your wording and tone. If the history is empty, treat the utterance as the first message in the conversation and paraphrase appropriately. Your output should sound informal and personable while preserving intent.
+
+---
+
+## Instructions
+- Read the user utterance, the current plan description, and the associated tool names.
+- Use the dialogue history to understand any prior context; if it's empty, proceed as if this is the initial request.
+- Generate a paraphrase that conveys the same intent and details without reusing wording from the plan.
+- Include all fixed entity values exactly as provided, ensuring they fit naturally into the paraphrase.
+- When mentioning dates, refer to how the user utterance expresses them and not from the fixed values. Stick to however the user has phrased them, as calendar dates, relative expressions, or a mix.
+- Refer to the first element of the dialogue history to get the current time for disambiguating dates.
+- Never directly mention the tools by name; instead, imply their use through the task description.
+- Minimize opening greetings (e.g., "Hi," "Hello,") and avoid continuation phrases like "Sure thing!" unless responding to an ongoing exchange.
+- Add casual, relevant fluff or a personal touch, but do not copy the plan's phrasing.
+- Use varied sentence starters rather than defaulting to "I'd like to," "Let's," "Hey there!" etc.
+- Keep your rewrite to one or two sentences in a friendly, conversational tone.
+- Rephrase the user's message to sound like a direct message from a user to a digital assistant agent.
+- Wrap only the final paraphrase in <user>...</user> tags.
+
+---
+
+## Examples
+
+### Example 1 (Standard Paraphrase)
+<Dialogue History>
+User: I reached out to the network operations crew last Friday with our detailed change requests, but I haven't heard back on whether the update has been applied.
+Assistant: It seems like they might have missed the last message; do you want me to send a gentle reminder or escalate it for faster attention?
+</Dialogue History>
+
+<User utterance>
+Great, can you schedule a follow-up email with our network team about ticket TICK12345?
+</User utterance>
+
+<Current plan description>
+Great, now can you create a follow-up to ensure the issue is resolved?
+</Current plan description>
+
+<Fixed Entity Values>
+{
+  "ticket_id": "TICK12345"
+}
+</Fixed Entity Values>
+
+<Relevant tool names>
+[
+  "schedule_email"
+]
+</Relevant tool names>
+
+Expected output:
+<user>Awesome! Send a quick update request to the network team for ticket TICK12345. I'll be on call next week and want to make sure we catch any hiccups early.</user>
+
+### Example 2 (Paraphrase that handles a date)
+<Dialogue History>
+System: Current time: 2025-07-24 11:39:21
+User: The finance department sent over preliminary Q2 numbers earlier, but I’m still waiting on the finalized breakdown for North America before wrapping up the report.
+Assistant: Got it-would you like me to start drafting the summary charts first or shall I focus on pulling together the detailed regional data?
+</Dialogue History>
+
+<User utterance>
+Hi, can you compile the Q2 revenue analysis with the final sales figures from the North America region and email it to finance@company.com by tomorrow?
+</User utterance>
+
+<Current plan description>
+Hi, can you compile the revenue analysis and send it over to company?
+</Current plan description>
+
+<Fixed Entity Values>
+{
+  "region": "North America",
+  "email": "finance@company.com",
+  "deadline": "2025-07-25"
+}
+</Fixed Entity Values>
+
+<Relevant tool names>
+[
+  "send_email",
+  "analyse_revenue"
+]
+</Relevant tool names>
+
+Expected output:
+<user>Since I'm up for the board meeting on Monday, please compile the Q2 North America sales data and forward it to finance@company.com by tomorrow. Thanks a ton!</user>
+
+---
+
+## Final Guidelines
+- Output only the paraphrased message wrapped in <user>...</user> tags.
+- Leverage any available dialogue history to shape your paraphrase; if the history is blank, create a standalone request.
+- Never reuse wording from the plan description verbatim.
+- Ensure all fixed entity values are included in the paraphrase as provided, without alteration.
+- Always preserve the date as expressed by the user. Do not pick up the corresponding value from the fixed entity values.
+- The tool names should not be mentioned directly but should inform the intent of the paraphrase.
+- Minimize or omit greeting phrases at the start of the paraphrase.
+- Enrich your rewrite with casual, context-appropriate touches.
+- Do not use "Sure thing!" or similar unless it's a direct reply in an ongoing dialogue.
+- Vary your openings to keep paraphrases fresh and engaging.
+- Keep responses to one or two sentences without extra notes or markup.
+- Make the paraphrase sound like a message from a user to a digital assistant agent.
+
+---
+
+## Inputs
+### Dialogue history: A list of previous messages in the conversation, formatted as "User: message" or "Assistant: message". This provides context for the paraphrase.
+<Dialogue History>
+{{dialogue_history}}
+</Dialogue History>
+
+### User utterance: A single line representing the original message that needs paraphrasing.
+<User utterance>
+{{user_utterance}}
+</User utterance>
+
+### Current plan description: A brief outline of the underlying intent or steps used to generate the original utterance. This may overlap with the user message but should not appear verbatim in your paraphrase.
+<Current plan description>
+{{curr_plan_desc}}
+</Current plan description>
+
+### Fixed Entity Values: A dictionary of values that should not be changed when paraphrasing. All parameters except dates should be preserved exactly as provided and must appear in the paraphrase as is.
+<Fixed Entity Values>
+{{params_provided}}
+</Fixed Entity Values>
+
+### Relevant tool names: A list of tool names that are relevant to the current task. The paraphrase must not directly reference these tools but should point towards the intent of using them.
+<Relevant tool names>
+{{relevant_tool_names}}
+</Relevant tool names>
+
+---
+
+## Output

@@ -1,0 +1,204 @@
+# Assistant Tool Summarizer Prompt
+
+## Overview
+You are the assistant agent responsible for summarizing the results of tool calls in a natural, conversational way. Your task is to:
+- Pull each requested field from the execution output of the tool(s) that were just called.
+- Weave those values into a concise, human-sounding summary.
+- Ensure your summary flows naturally from the existing dialogue and addresses the user's original request.
+- Include all specified parameters in your summary.
+- Output your summary inside `<assistant>` and `</assistant>` tags.
+
+---
+
+## Instructions
+- The JSON schema for the tools only contains definitions relevant to the parameters you need to summarize.
+- Use the values from the memory cache or tool outputs to fill in the requested parameters.
+- Do **not** output raw JSON or data structures.
+- Write a single, coherent paragraph (or two short ones) summarizing the results of the tools.
+- Use natural language, referencing the user's context (e.g., "Your flight is confirmed..." or "I found...").
+- Include all requested parameters and their values.
+
+---
+
+## Examples
+
+### Example 1
+<Dialogue History>
+[
+  {
+    "role": "user",
+    "content": "Book me a flight from Seattle to Denver on August 15th."
+  },
+  {
+    "role": "assistant",
+    "content": "Economy or business class?"
+  },
+  {
+    "role": "user",
+    "content": "Economy, please."
+  },
+  {
+    "role": "assistant_tool_call",
+    "content": "[{\"name\": \"reserve_flight\", \"arguments\": {\"origin\": \"Seattle\", \"destination\": \"Denver\", \"date\": \"2025-08-15\", \"seat_class\": \"Economy\"}}]"
+  },
+  {
+    "role": "tool",
+    "content": "{\"flight_number\": \"AA123\", \"departure_time\": \"2025-08-15T09:00:00\", \"status\": \"Confirmed\"}"
+  }
+]
+</Dialogue History>
+
+<Memory Cache>
+{
+  "origin": "Seattle",
+  "destination": "Denver",
+  "date": "2025-08-15",
+  "seat_class": "Economy",
+  "flight_number": "AA123",
+  "departure_time": "2025-08-15T09:00:00",
+  "status": "Confirmed"
+}
+</Memory Cache>
+
+<Tools Schema>
+{
+  "type": "function",
+  "function": {
+    "name": "reserve_flight",
+    "description": "Reserves a flight specifying origin, destination, date, and seat class.",
+    "results": {
+      "type": "object",
+      "properties": {
+        "flight_number": {
+          "type": "string",
+          "description": "Flight number"
+        },
+        "departure_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Departure time in ISO 8601 format"
+        },
+        "status": {
+          "type": "string",
+          "description": "Booking status"
+        }
+      },
+      "required": ["flight_number", "departure_time", "status"]
+    }
+  }
+}
+</Tools Schema>
+
+<Parameters to Report>
+flight_number, departure_time, status
+</Parameters to Report>
+
+Expected output:
+<assistant>I've booked your flight AA123 departing on August 15th at 9:00 AM. Your seat in Economy is confirmed.</assistant>
+
+### Example 2
+<Dialogue History>
+[
+  {
+    "role": "user",
+    "content": "Find a good Italian restaurant in Brooklyn for tomorrow evening."
+  },
+  {
+    "role": "assistant_tool_call",
+    "content": "[{\"name\": \"search_restaurants\", \"arguments\": {\"cuisine\": \"Italian\", \"location\": \"Brooklyn\", \"date\": \"2025-07-20\"}}]"
+  },
+  {
+    "role": "tool",
+    "content": "{\"name\": \"Trattoria Roma\", \"address\": \"123 Main St, Brooklyn, NY\", \"rating\": 4.5}"
+  }
+]
+</Dialogue History>
+
+<Memory Cache>
+{
+  "cuisine": "Italian",
+  "location": "Brooklyn",
+  "date": "2025-07-20",
+  "name": "Trattoria Roma",
+  "address": "123 Main St, Brooklyn, NY",
+  "rating": 4.5
+}
+</Memory Cache>
+
+<Tools Schema>
+{
+  "type": "function",
+  "function": {
+    "name": "search_restaurants",
+    "description": "Finds restaurants by cuisine, date, and location",
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the restaurant"
+          },
+          "address": {
+            "type": "string",
+            "description": "Address of the restaurant"
+          },
+          "rating": {
+            "type": "number",
+            "description": "Rating of the restaurant"
+          },
+          "availability": {
+            "type": "string",
+            "description": "Availability status of the restaurant"
+          }
+        }
+      }
+    }
+  }
+}
+</Tools Schema>
+
+<Parameters to Report>
+name, address, rating
+</Parameters to Report>
+
+Expected output:
+<assistant>I found Trattoria Roma in Brooklyn at 123 Main St. It has a 4.5-star rating and looks perfect for tomorrow evening.</assistant>
+
+---
+
+## Final Guidelines
+- Always include every field listed in **Parameters to Report**.  
+- Do not introduce information not present in the memory cache or tool output.  
+- Keep your language clear, concise, and user-focused.  
+- Do not display JSON or code.  
+- Maintain consistency with the conversation's tone and style.
+- Output your summary inside `<assistant>` and `</assistant>` tags.
+
+---
+
+## Inputs
+### Dialogue History: The full exchange up to this point, including system messages, user questions, and assistant replies.
+<Dialogue History>
+{{history}}
+</Dialogue History>
+
+### Memory Cache: A JSON object of prior extracted facts (may include some tool outputs).
+<Memory Cache>
+{{memory_cache}}
+</Memory Cache>
+
+### Tools Schema: The JSON definition of the tools that were just called, that contain only the returned fields relevant to the parameters you need to summarize.
+<Tools Schema>
+{{tool_definitions}}
+</Tools Schema>
+
+### Parameters to Report: A comma-separated list of the output fields you must include in your summary.
+<Parameters to Report>
+{{params_to_be_provided}}
+</Parameters to Report>
+
+---
+
+## Output

@@ -1,0 +1,145 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "create_order",
+      "description": "Submits a new order to the system for a specified customer, including a list of products and their quantities. This is the primary function for initiating a purchase and will trigger downstream inventory and fulfillment processes.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "The unique identifier for the customer placing the order."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "product_id": {
+                  "type": "string",
+                  "description": "ID for the product."
+                },
+                "quantity": {
+                  "type": "integer",
+                  "description": "Number of units."
+                }
+              },
+              "required": [
+                "product_id",
+                "quantity"
+              ]
+            }
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "express"
+            ],
+            "description": "Specify 'express' for expedited fulfillment."
+          }
+        },
+        "required": [
+          "customer_id",
+          "items"
+        ]
+      },
+      "results": {
+        "type": "object",
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "description": "The unique identifier for the newly created order, which can be used for tracking."
+          },
+          "estimated_delivery": {
+            "type": "string",
+            "description": "The estimated delivery date for the order, provided in ISO 8601 format."
+          },
+          "status": {
+            "type": "string",
+            "description": "The initial status of the order upon creation, typically 'pending' or 'processing'."
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "track_shipment",
+      "description": "Get tracking details for a shipment.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "shipment_id": {
+            "type": "string",
+            "description": "Shipment ID to track."
+          }
+        },
+        "required": [
+          "shipment_id"
+        ]
+      },
+      "results": {
+        "type": "object",
+        "properties": {
+          "current_status": {
+            "type": "string",
+            "description": "Current status (e.g., 'In Transit')."
+          },
+          "last_updated": {
+            "type": "string",
+            "description": "Timestamp of the last update."
+          },
+          "location_description": {
+            "type": "string",
+            "description": "Last known location."
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "calculate_reorder_level",
+      "description": "Calculates the ideal stock level at which to reorder a product based on its sales velocity and supplier lead time.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "description": "The unique identifier of the product being analyzed."
+          },
+          "avg_daily_demand": {
+            "type": "number",
+            "description": "The average number of units of the product sold per day, calculated over the last 90 days."
+          },
+          "lead_time_days": {
+            "type": "number",
+            "description": "The typical number of days between placing an order with a supplier and receiving the inventory."
+          }
+        },
+        "required": [
+          "product_id",
+          "avg_daily_demand",
+          "lead_time_days"
+        ]
+      },
+      "results": {
+        "type": "object",
+        "properties": {
+          "reorder_level": {
+            "type": "integer",
+            "description": "The calculated stock quantity threshold. A new order should be placed when inventory drops to this level."
+          },
+          "calculation_timestamp": {
+            "type": "string",
+            "description": "The UTC timestamp indicating when this reorder level was calculated."
+          }
+        }
+      }
+    }
+  }
+]

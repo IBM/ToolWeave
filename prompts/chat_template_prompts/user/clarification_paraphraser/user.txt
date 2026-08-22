@@ -1,0 +1,112 @@
+## Guidelines
+- Ensure all fixed entity values are included in the paraphrase as provided, without alteration.
+- Always preserve the date as expressed by the user. Do not pick up the corresponding value from the fixed entity values.
+- The tool names should not be mentioned directly but should inform the intent of the paraphrase.
+- Do not replicate exact phrases from the question or original reply.
+- Never add more information about previous user requests; focus solely on paraphrasing the current utterance.
+- Keep the tone friendly and conversational.
+- Make sure the paraphrase sounds like a natural response from the user to a digital assistant.
+- Leverage the history when available.
+
+---
+
+## Examples
+
+### Example 1 (Paraphrase with Date)
+<Dialogue History>
+System: Current time: 2025-07-15 16:19:45
+User: I'm organizing a team meeting next week and want to make sure we have a suitable room.
+Assistant: Do you have a specific room in mind or any particular requirements?
+User: Not yet, I just know we need 8 seats and a projector.
+Assistant: Could you tell me the date and time you'd like the conference room booked?
+</Dialogue History>
+
+<Previous Assistant Utterance>
+Could you tell me the date and time you'd like the conference room booked?
+</Previous Assistant Utterance>
+
+<User utterance>
+I'd like it reserved for Friday, July 18th at 2:30 PM.
+</User utterance>
+
+<Fixed Entity Values>
+{
+  "reservation_date": "2025-07-18",
+  "reservation_time": "14:30",
+  "room_capacity": 8,
+  "equipment": ["projector"]
+}
+</Fixed Entity Values>
+
+<Relevant tool names>
+[
+  "reserve_conference_room"
+]
+</Relevant tool names>
+
+Expected output:
+Reserve the conference room for Friday, July 18th at 2:30 PM.
+
+### Example 2 (Standard Paraphrase)
+<Dialogue History>
+User: There's a new bug report in our tracker that hasn't been prioritized yet.
+Assistant: I can handle that! What's the ticket number and what priority should it have?
+User: It's about users unable to log in this morning.
+Assistant: What's the ticket number and priority level you want to assign?
+</Dialogue History>
+
+<Previous Assistant Utterance>
+What's the ticket number and priority level you want to assign?
+</Previous Assistant Utterance>
+
+<User utterance>
+It's ticket TICK67890, and please mark it as critical priority so it gets escalated immediately.
+</User utterance>
+
+<Fixed Entity Values>
+{
+  "ticket_id": "TICK67890",
+  "priority": "critical"
+}
+</Fixed Entity Values>
+
+<Relevant tool names>
+[
+  "update_ticket_priority"
+]
+</Relevant tool names>
+
+Expected output:
+Mark ticket TICK67890 as critical priority so it escalates right away.
+
+---
+
+## Inputs
+### Dialogue history: A list of previous messages in the conversation, formatted as "User: message" or "Assistant: message". This provides context for the paraphrase.
+<Dialogue History>
+{{dialogue_history}}
+</Dialogue History>
+
+### Previous Assistant Utterance: The assistant's clarification question requesting specific missing details or parameters.
+<Previous Assistant Utterance>
+{{prev_assistant_utterance}}
+</Previous Assistant Utterance>
+
+### User utterance: A single line representing the original message that needs paraphrasing.
+<User utterance>
+{{user_utterance}}
+</User utterance>
+
+### Fixed Entity Values: A dictionary of values that should not be changed when paraphrasing. All parameters except dates should be preserved exactly as provided and must appear in the paraphrase as is.
+<Fixed Entity Values>
+{{params_provided}}
+</Fixed Entity Values>
+
+### Relevant tool names: A list of tool names that are relevant to the current task. The paraphrase must not directly reference these tools but should point towards the intent of using them.
+<Relevant tool names>
+{{relevant_tool_names}}
+</Relevant tool names>
+
+---
+
+Generate a natural paraphrase of the user's reply that captures all necessary details without echoing the original phrasing. Use a casual tone.

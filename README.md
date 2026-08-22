@@ -1,78 +1,166 @@
-<!-- This should be the location of the title of the repository, normally the short name -->
-# repo-template
+# ToolWeave: Structured Synthesis of Complex Multi-Turn Tool-Calling Dialogues
 
-<!-- Build Status, is a great thing to have at the top of your repository, it shows that you take your CI/CD as first class citizens -->
-<!-- [![Build Status](https://travis-ci.org/jjasghar/ibm-cloud-cli.svg?branch=master)](https://travis-ci.org/jjasghar/ibm-cloud-cli) -->
+This repository contains tools and scripts to generate **synthetic function calling data** for fine-tuning large language models (LLMs).  
+The goal is to simulate realistic tool-usage scenarios that can help models learn how to correctly call functions or use APIs.
 
-<!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
-## Scope
+## 🔐 Environment Setup for using watsonx.ai Models
 
-The purpose of this project is to provide a template for new open source repositories.
+If you plan to use models from **IBM watsonx.ai**, you must create a `.env` file in the **root folder** of the repository (`ToolWeave`).
 
-<!-- A more detailed Usage or detailed explaination of the repository here -->
-## Usage
+Create a `.env` file with the following contents:
 
-This repository contains some example best practices for open source repositories:
+```env
+IBM_CLOUD_API_KEY="Your IBM API key required to authenticate with watsonx.ai"
+IBM_PROJECT_ID="The Project ID for watsonx.ai, where the requests will be forwarded."
+WATSONX_REGION="The ProjectRegion for watsonx.ai (\"us-south\", \"eu-gb\", \"jp-tok\", \"eu-de\")"
+```
 
-* [LICENSE](LICENSE)
-* [README.md](README.md)
-* [CONTRIBUTING.md](CONTRIBUTING.md)
-* [MAINTAINERS.md](MAINTAINERS.md)
-* [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-<!-- A Changelog allows you to track major changes and things that happen, https://github.com/github-changelog-generator/github-changelog-generator can help automate the process -->
-* [CHANGELOG.md](CHANGELOG.md)
+### Adding Model Parameters
 
-> These are optional
+To configure a model, add its generation parameters to the `watsonx_llm_config.yml` file. Each model should be defined using the following keys:
 
-<!-- The following are OPTIONAL, but strongly suggested to have in your repository. -->
-* [dco.yml](.github/dco.yml) - This enables DCO bot for you, please take a look https://github.com/probot/dco for more details.
-* [travis.yml](.travis.yml) - This is a example `.travis.yml`, please take a look https://docs.travis-ci.com/user/tutorial/ for more details.
+- `MODEL`: Name or path of the model (e.g., `"openai/gpt-oss-120b"`)
+- `MAX_NEW_TOKENS`: Maximum number of new tokens to generate
+- `TEMPERATURE`: Sampling temperature (set to `0` for deterministic output)
+- `DECODING_METHOD`: Generation decoding strategy (e.g., `"greedy"`, `"beam_search"`, `"top_k"`, etc.)
+- `REPETITION_PENALTY`: Penalty for repeated phrases (typically `1.0` for no penalty)
 
-These may be copied into a new or existing project to make it easier for developers not on a project team to collaborate.
+### Sample Configuration
 
-<!-- A notes section is useful for anything that isn't covered in the Usage or Scope. Like what we have below. -->
-## Notes
+```yaml
+MODEL: "openai/gpt-oss-120b"
+MAX_NEW_TOKENS: 8192
+TEMPERATURE: 0
+DECODING_METHOD: "greedy"
+REPETITION_PENALTY: 1.0
+```
 
-**NOTE: While this boilerplate project uses the Apache 2.0 license, when
-establishing a new repo using this template, please use the
-license that was approved for your project.**
+## 🚀 Running the Pipeline
+For the command to run the main script which runs all individual components of the pipeline, go to the end of this section.
 
-**NOTE: This repository has been configured with the [DCO bot](https://github.com/probot/dco).
-When you set up a new repository that uses the Apache license, you should
-use the DCO to manage contributions. The DCO bot will help enforce that.
-Please contact one of the IBM GH Org stewards.**
+To generate tool graphs, sample tools, create dialogue plans, and synthesize dialogues, follow these steps:
 
-<!-- Questions can be useful but optional, this gives you a place to say, "This is how to contact this project maintainers or create PRs -->
-If you have any questions or issues you can create a new [issue here][issues].
+1.  Ensure you are in the **main project root directory** (e.g., `ToolWeave`, the one containing the `src`, `scripts`, and `data` folders). All `python -m ...` commands should be run from this directory.
 
-Pull requests are very welcome! Make sure your patches are well tested.
-Ideally create a topic branch for every separate change you make. For
-example:
+2. To run the API synthesizer:
+```bash
+python -m scripts.domain_api_synthesizer \
+  --domains_file domains.txt \
+  --output_dir output/apis/ \
+  --connection_mode llm \
+  --max_workers 20
+```
+- The `connection_mode` argument is used to control what algorithm is used to create connections between APIs. `llm` queries an LLM for each parameter pair while `semantic` uses embedding-based similarity to determine connections.
+- Adding a `#` before domain names in the domain file will skip API synthesis for those domains.
+- Detailed info about all supported arguments can be found by running `python -m scripts.domain_api_synthesizer --help`.
 
-1. Fork the repo
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+3. To generate goals for each domain:
+```bash
+python -m scripts.complex_goal_generator \
+  --graph_path output/apis/agriculture/graph_agriculture.pkl \
+  --api_definitions_path output/apis/agriculture/sdk_agriculture.json \
+  --output_goals_file_path output/goals/agriculture.jsonl \
+  --synthetic_apis --algorithm all_patterns
+```
+- The hyperparameters for various algorithms that perform traversal over the tool graph have already been set to optimal values.
+- If you want to change them, take a look at all the possible arguments to the script by running `python -m scripts.complex_goal_generator --help`.
+
+4. To generate dialogue plans:
+```bash
+python -m scripts.complex_dialogue_planner \
+  --goals_file_path output/goals/agriculture.jsonl \
+  --api_definitions_path output/apis/agriculture/sdk_agriculture.json \
+  --prompts_dir prompts/prompts_for_partitioning_goal \
+  --output_path output/plans/agriculture.jsonl \
+  --num_plan_variants 2 \
+  --max_fan_out_patterns -1 \
+  --synthetic_apis --max_workers 60
+```
+- More info about all supported arguments can be found by running `python -m scripts.complex_dialogue_planner --help`.
+
+5. To generate dialogues:
+```bash
+python -m scripts.generate_dialogues \
+  --plans_file output/plans/agriculture.jsonl \
+  --tools_list_path output/apis/agriculture/sdk_agriculture.json \
+  --output_file output/dialogues/agriculture.jsonl \
+  --generation_strategy chat --prompt_config_file prompt_configs/dialogue_generators/chat.yml \
+  --synthetic_apis --max_workers 60
+```
+- The options available for generation strategy are `generate` and `chat` which use all the models in `model.generate` and `model.chat` modes, respectively.
+- Information about other relevant parameters can be found by running `python -m scripts.generate_dialogues --help`.
+
+6. Due to the inherent randomness in LLM generations, few multi-step dialogues might inadvertently end up being false multi-step dialogues. To address this, we provide a script that converts such false multi-step sequences into parallel tool call sequences:
+```bash
+python -m scripts.convert_false_multi_step_to_parallel \
+  --input_dir output/dialogues/
+```
+- **Note**: This script modifies dialogues IN-PLACE. It is recommended to run this script at this point (before the following post-processing steps) to avoid repeated conversions.
+
+7. To perform dialogue refinement:
+```bash
+python -m scripts.refine_dialogues \
+  --dialogues_file output/dialogues/agriculture.jsonl \
+  --output_file output/refined_dialogues/agriculture.jsonl \
+  --refinements paraphrase \
+  --generation_strategy chat --prompt_config_file prompt_configs/dialogue_refiners/chat.yml \
+  --max_workers 60
+```
+- The `--refinements` argument takes in various types of refinements to apply to the dialogues. For now, only `paraphrase` is available.
+- For more information on all supported arguments, you can run `python -m scripts.refine_dialogues --help`.
+
+8. To compute overall dialogue statistics:
+```bash
+python -m scripts.compute_dialogue_statistics \
+  --input_dir output/refined_dialogues/ \
+  --output_file output/dialogue_statistics.jsonl
+```
+- Each line in the output file will contain statistics for a single domain whose dialogue file is located in the `--input_dir`.
+- The final line in the file contains the overall statistics for all domains.
+
+9. To compute true multi-step statistics (a much leaner version of overall statistics that focuses on multi-step turns):
+```bash
+python -m scripts.compute_true_multi_step_stats \
+  --input_dir output/refined_dialogues/ \
+  --output_file output/true_multi_step_stats.json
+```
+- There is a single json file with true vs total multi-step turns for each domain along with overall statistics.
+
+10. To run the entire pipeline in one go:
+```bash
+python -m scripts.generate_synthetic_data \
+  --output_dir output/ \
+  --generate_apis \
+  --generate_goals_and_plans \
+  --generate_dialogues \
+  --refine_dialogues \
+  --compute_dialogue_stats
+```
+- Note that this main script also runs the false multi-step to parallel conversion step mentioned in point 6.
+
+11. To add missing function data after running the full pipeline:
+```bash
+python -m scripts.add_missing_functions_to_dialogues \
+  --input_dir output/refined_dialogues/ \
+  --output_dir output/missing_func_dialogues/ \
+  --missing_func_fraction 0.15
+```
+
+---
 
 ## License
 
-All source files must include a Copyright and License header. The SPDX license header is 
-preferred because it can be easily scanned.
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
 
-If you would like to see the detailed LICENSE click [here](LICENSE).
+## 📙 Citation
 
-```text
-#
-# Copyright IBM Corp. {Year project was created} - {Current Year}
-# SPDX-License-Identifier: Apache-2.0
-#
+If you use this repo or our paper in your research, please cite:
+
+```bibtex
+@article{khandelwal2026toolweave,
+  title={ToolWeave: Structured Synthesis of Complex Multi-Turn Tool-Calling Dialogues},
+  author={Khandelwal, Dinesh and Punnavajhala, Gnana Prakash and Bhargav, GPS and Pandey, Gaurav and Joshi, Sachin and Karanam, Hima and Raghu, Dinesh},
+  journal={arXiv preprint arXiv:2605.12521},
+  year={2026}
+}
 ```
-## Authors
-
-Optionally, you may include a list of authors, though this is redundant with the built-in
-GitHub list of contributors.
-
-- Author: New OpenSource IBMer <new-opensource-ibmer@ibm.com>
-
-[issues]: https://github.com/IBM/repo-template/issues/new

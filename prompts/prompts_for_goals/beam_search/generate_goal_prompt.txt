@@ -1,0 +1,34 @@
+Your Task:
+Based on the following sequence of tool calls, generate a single, clear sentence describing a high-level user goal.
+
+The goal must be abstract: do not use specific proper nouns like city names, people's names, or specific dates.
+However, the goal should be detailed enough to describe a realistic scenario or intent by using generic but descriptive placeholders (e.g., "a key client," "a recent order," "a marketing campaign").
+
+---
+**Example 1:**
+
+*Tools:*
+- get_account: Retrieves account details.
+- get_contact: Retrieves contact information for an account.
+- create_note_attachment: Adds a note to a record.
+
+*Good High-Level Goal:*
+"Review a key client's account and contact information, and then add a note to document the outcome of a recent call."
+---
+**Example 2:**
+
+*Tools:*
+- search_products: Searches for products in a catalog.
+- check_inventory: Checks the stock level for a product.
+- create_purchase_order: Creates a new purchase order.
+
+*Good High-Level Goal:*
+"Find a specific product, confirm it's in stock, and then create a purchase order to replenish the inventory."
+---
+
+**Now, generate a goal for the following sequence:**
+
+**Tools:**
+{tools_str}
+
+**High-Level Goal:**

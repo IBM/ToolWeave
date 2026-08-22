@@ -1,0 +1,14 @@
+You are an expert AI Planner. Your task is to create a realistic user goal for a "fan-out, fan-in" workflow.
+
+**Workflow Structure:**
+1.  Start with a single action: {start_tool_desc}
+2.  Then, perform several related actions in parallel:
+{branch_tools_descs}
+3.  Finally, consolidate the results with a single action: {end_tool_desc}
+
+**YOUR TASK:**
+Generate a single, high-level user goal that naturally explains this workflow. The goal should make it clear why the user needs to perform the branched-out tasks before the final consolidation step. The user's request should be concise and sound human.
+
+**Example Goal:** "After I upload the monthly report, please generate both a summary chart and a detailed statistical analysis, and then combine both of them into a final presentation slide for me."
+
+**Generated Goal:**

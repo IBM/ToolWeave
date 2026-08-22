@@ -1,0 +1,114 @@
+You are an expert API designer generating foundational APIs for the **'{domain_name}'** domain.
+
+**Domain Context:**
+{domain_info}
+
+---
+
+**Your Primary Task:**
+Generate **{NUMBER_OF_APIS_TO_GENERATE}** diverse, foundational "seed" APIs. These should represent common entry-point functions for the domain, such as searching, listing, creating, or submitting key resources.
+
+---
+
+### CRITICAL FORMATTING RULES
+
+**1. Enforce Enums**
+If a parameter (input or result) has a constrained set of string values (e.g., a status or category), define it using an enum.
+
+Example:
+```json
+"status": {{
+  "type": "string",
+  "description": "The current status of the order.",
+  "enum": ["pending", "shipped", "delivered", "cancelled"]
+}}
+```
+
+---
+
+**2. Use Date/Time Formats**
+Always specify the `format` for date or datetime fields.
+
+- For **dates only**: `"format": "date"` (e.g., `"2025-07-19"`)
+- For **timestamps**: `"format": "date-time"` (e.g., `"2025-07-19T10:30:00Z"`)
+
+Example:
+```json
+"creation_date": {{
+  "type": "string",
+  "description": "The creation timestamp of the resource in ISO 8601 format.",
+  "format": "date-time"
+}}
+```
+
+---
+
+**3. Use Snake Case**
+Use `snake_case` for all function names and parameter names.
+**Never** include the domain name in function names.
+Example: `search_items`
+Wrong: `domain_search_items`
+
+---
+
+**4. Provide Clear Descriptions**
+Every function, parameter, and response field **must have** a meaningful description.
+
+- Use a mix of **short** and **long** descriptions across different APIs.
+- This mirrors real-world API SDK design patterns.
+
+---
+
+**5. Logical Result Structure**
+Make sure result schemas logically reflect the action taken.
+
+- A **create/submit** function should return the new resource ID and a status.
+- A **search/list** function should return an array of objects.
+- DO NOT echo input parameters back in results.
+
+---
+
+**6. The 'required' Field is MANDATORY**
+You must determine the minimal set of parameters that are required to make a **logical and useful call** to the API. Follow these rules strictly:
+    - **Primary Key Rule:** A parameter is **REQUIRED** if the API cannot function without it. For example, `get_user_details` is useless without `user_id`.
+    - **No Useless Calls Rule:** If calling an API with zero parameters would result in a nonsensical or uselessly generic action (like searching for nothing), you **MUST** designate one or more parameters as required. **Do not return an empty required list for these APIs.**
+    - **Identify the Core Subject:** For any API that gets, searches, updates, deletes, or analyzes a specific resource, at least one parameter identifying that resource (e.g., `user_id`, `query`, `file_id`) **MUST** be required.
+    - **Filtering vs. Identifying:** Parameters used for filtering or sorting (`limit`, `sort_by`, `status`) are almost always **OPTIONAL**.
+
+---
+
+**7. Enforce Consistent Naming for Common Entities**
+To ensure that APIs can be easily connected, use standardized, common names for parameters that represent the same core entity. An ID that is an output of one function should have the **exact same name** if it is used as an input to another.
+
+* **Correct Example:**
+    * `create_user` (output) -> `user_id`
+    * `get_user_details` (input) -> `user_id`
+
+* **Incorrect Example:**
+    * `create_order` (output) -> `order_identifier`
+    * `track_order` (input) -> `order_ref`
+
+* **Correct Example:**
+    * `calculate_area` (output) -> `area`
+    * `calculate_volume` (input) -> `area`
+
+* **Correct Example:**
+    * `find_files` (output) -> `file_path`
+    * `get_file_permissions` (input) -> `file_path`
+
+**Use common identifiers like `user_id`, `product_id`, `order_id`, `session_id`, etc., consistently across all generated APIs.**
+
+---
+
+### IN-CONTEXT EXAMPLES OF WELL-FORMED APIS
+{EXAMPLES_SECTION}
+--- END EXAMPLES ---
+
+---
+
+### FINAL TASK
+
+Based on the domain **'{domain_name}'**, generate exactly **{NUMBER_OF_APIS_TO_GENERATE}** new, diverse, well-formed **seed APIs** following all the rules above.
+
+Output ONLY a valid **JSON list** of new API definitions.
+```json

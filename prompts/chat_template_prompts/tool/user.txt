@@ -1,0 +1,289 @@
+## Guidelines
+- Return valid JSON matching the provided output schema.
+- Refer to any error messages (<Error Message>) to guide corrections in your output or fill missing/invalid parameters.
+- Honor decision variables exactly.
+- Generate realistic, contextually relevant values; avoid placeholders.
+- For PII or account numbers, use fictitious but valid formats.
+- Do not wrap in markdown or add comments/explanations.
+- Ensure each value matches its declared type and vary data for realism.
+- Return valid JSON either as a top-level object or as an array of objects, according to the tool's results schema.
+- Do not wrap the output in an envelope object (e.g., `{"results":[...]}`); emit the array or object directly.
+- For datetime parameters, always refer to the "Current time" from the system prompt to disambiguate any relative expressions.
+- Track all previously generated dates and times, ensuring that each new date or time advances forward from the system prompt's current time (and any earlier generated values), and never occurs before that time unless reusing an earlier timestamp is contextually justified.
+
+---
+
+## Examples
+
+### Example 1
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-08-17 13:15:00."
+  },
+  {
+    "role": "user",
+    "content": "Find me flights from New York to London on May 6th."
+  }
+  {
+    "role": "assistant_tool_call",
+    "content": "[{\"name\": \"find_flights\", \"arguments\": {\"origin\": \"New York\", \"destination\": \"London\", \"date\": \"2025-05-06\"}}]"
+  }
+]
+</Dialogue History>
+
+<Tool Parameters>
+{
+  "origin": "New York",
+  "destination": "London",
+  "date": "2025-05-06"
+}
+</Tool Parameters>
+
+<Decision Variables>
+
+</Decision Variables>
+
+<Error Message>
+
+</Error Message>
+
+<Output Schema>
+{
+  "type": "object",
+  "properties": {
+    "flights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "flight_num": {"type": "string"},
+          "departure": {"type": "string"},
+          "arrival": {"type": "string"},
+          "price": {"type": "number"}
+        }
+      }
+    }
+  }
+}
+</Output Schema>
+
+Expected output:
+{
+  "flights": [
+    {
+      "flight_num": "BA101",
+      "departure": "08:00",
+      "arrival": "20:00",
+      "price": 650
+    },
+    {
+      "flight_num": "VS004",
+      "departure": "10:30",
+      "arrival": "22:30",
+      "price": 680
+    }
+  ]
+}
+
+### Example 2
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-09-01 21:37:19."
+  },
+  {
+    "role": "user",
+    "content": "What's the weather like in Seattle?"
+  },
+  {
+    "role": "assistant_tool_call",
+    "content": "[{\"name\": \"get_weather\", \"arguments\": {\"location\": \"Seattle\"}}]"
+  }
+]
+</Dialogue History>
+
+<Tool Parameters>
+{
+  "location": "Seattle"
+}
+</Tool Parameters>
+
+<Decision Variables>
+
+</Decision Variables>
+
+<Error Message>
+
+</Error Message>
+
+<Output Schema>
+{
+  "type": "object",
+  "properties": {
+    "temperature": {"type": "number"},
+    "condition": {"type": "string"},
+    "humidity": {"type": "number"}
+  }
+}
+</Output Schema>
+
+Expected output:
+{
+  "temperature": 55,
+  "condition": "Cloudy",
+  "humidity": 73
+}
+
+### Example 3
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-08-15 17:21:05."
+  },
+  {
+    "role": "user",
+    "content": "What's the weather like in Miami?"
+  },
+  {
+    "role": "assistant_tool_call",
+    "content": "[{\"name\": \"get_weather\", \"arguments\": {\"location\": \"Miami\"}}]"
+  }
+]
+</Dialogue History>
+
+<Tool Parameters>
+{
+  "location": "Miami"
+}
+</Tool Parameters>
+
+<Decision Variables>
+{
+  "temperature": 80,
+  "condition": "Sunny"
+}
+</Decision Variables>
+
+<Error Message>
+
+</Error Message>
+
+<Output Schema>
+{
+  "type": "object",
+  "properties": {
+    "temperature": {"type": "number"},
+    "condition": {"type": "string"},
+    "humidity": {"type": "number"}
+  }
+}
+</Output Schema>
+
+Expected output:
+{
+  "temperature": 80,
+  "condition": "Sunny",
+  "humidity": 65
+}
+
+### Example 4
+<Dialogue History>
+[
+  {
+    "role": "system",
+    "content": "Current time: 2025-03-15 09:00:00."
+  },
+  {
+    "role": "user",
+    "content": "Find me flights from Paris to Berlin."
+  },
+  {
+    "role": "assistant_tool_call",
+    "content": "[{\"name\": \"find_flights\", \"arguments\": {\"origin\": \"Paris\", \"destination\": \"Berlin\", \"date\": \"2025-03-15\"}}]"
+  }
+]
+</Dialogue History>
+
+<Tool Parameters>
+{
+  "origin": "Paris",
+  "destination": "Berlin",
+  "date": "2025-03-15"
+}
+</Tool Parameters>
+
+<Decision Variables>
+
+</Decision Variables>
+
+<Error Message>
+Missing or invalid fields in response item 0:
+  - Field 'price' is missing
+</Error Message>
+
+<Output Schema>
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "flight_num": {"type": "string"},
+      "departure": {"type": "string"},
+      "arrival": {"type": "string"},
+      "price": {"type": "number"}
+    }
+  }
+}
+</Output Schema>
+
+Expected output:
+[
+  {
+    "flight_num": "AF114",
+    "departure": "09:00",
+    "arrival": "10:30",
+    "price": 180
+  },
+  {
+    "flight_num": "BA756",
+    "departure": "14:00",
+    "arrival": "15:30",
+    "price": 200
+  }
+]
+
+---
+
+## Inputs
+### Dialogue History: The full dialogue so far (system, user, assistant messages and tool calls).
+<Dialogue History>
+{{dialogue_history}}
+</Dialogue History>
+
+### Tool Parameters: JSON object containing the tool name and the parameters to execute it with.
+<Tool Parameters>
+{{tool_params}}
+</Tool Parameters>
+
+### Decision Variables (optional): JSON object mapping output field names to fixed values.
+<Decision Variables>
+{{decision_variables}}
+</Decision Variables>
+
+### Error Message (optional): JSON string containing the error message(s) from previous attempt.
+<Error Message>
+{{error_msg}}
+</Error Message>
+
+### Output Schema: The expected structure of the tool's output.
+<Output Schema>
+{{results_schema}}
+</Output Schema>
+
+---
+
+Generate your output based on the above guidelines and examples, ensuring it fits naturally into the dialogue context and includes all specified parameters in a single, coherent JSON object or array.

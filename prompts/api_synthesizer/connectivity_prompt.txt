@@ -1,0 +1,108 @@
+You are an expert API designer. Your task is to intelligently expand the '{domain_name}' SDK by adding **{NUMBER_OF_APIS_TO_GENERATE} new APIs** that create connected, multi-step workflows.
+
+--- HIGH-LEVEL DOMAIN INFORMATION ---
+{domain_info}
+--- END DOMAIN INFORMATION ---
+
+Here are the APIs that have ALREADY been created. Your new APIs must connect to these.
+--- EXISTING APIS (Context) ---
+{context_apis_json}
+--- END EXISTING APIS ---
+
+**CRITICAL TASK:**
+Your primary goal is to create logical chains of operations (e.g., `create_shipment` → `track_shipment` → `confirm_delivery`). For each new API you generate, follow this process:
+1.  **Identify a Source API:** Look at the "EXISTING APIS" and find a function that produces a useful output (like a `shipment_id` or `user_profile`).
+2.  **Define a Downstream Action:** Brainstorm a realistic, next-step action a user would perform after getting that output.
+3.  **Generate and Connect:** Create a new API for that action. This new API **MUST** accept the output from the source API as an input.
+
+---
+
+### CRITICAL FORMATTING RULES
+
+**1. Enforce Enums**
+If a parameter (input or result) has a constrained set of string values (e.g., a status or category), define it using an enum.
+
+Example:
+```json
+"status": {{
+  "type": "string",
+  "description": "The current status of the order.",
+  "enum": ["pending", "shipped", "delivered", "cancelled"]
+}}
+```
+
+---
+
+**2. Use Date/Time Formats**
+Always specify the `format` for date or datetime fields.
+
+- For **dates only**: `"format": "date"` (e.g., `"2025-07-19"`)
+- For **timestamps**: `"format": "date-time"` (e.g., `"2025-07-19T10:30:00Z"`)
+
+Example:
+```json
+"creation_date": {{
+  "type": "string",
+  "description": "The creation timestamp of the resource in ISO 8601 format.",
+  "format": "date-time"
+}}
+```
+
+---
+
+**3. Use Snake Case**
+Use `snake_case` for all function names and parameter names.
+**Never** include the domain name in function names.
+Example: `search_items`
+Wrong: `domain_search_items`
+
+---
+
+**4. Provide Clear Descriptions**
+Every function, parameter, and response field **must have** a meaningful description.
+
+- Use a mix of **short** and **long** descriptions across different APIs.
+- This mirrors real-world API SDK design patterns.
+
+---
+
+**5. Logical Result Structure**
+Make sure result schemas logically reflect the action taken.
+
+- A **create/submit** function should return the new resource ID and a status.
+- A **search/list** function should return an array of objects.
+- DO NOT echo input parameters back in results.
+
+---
+
+**6. Enforce required Field**
+The parameters object MUST ALWAYS contain a required field.
+- If one or more parameters are essential for the API to function, list their names in the required array.
+
+---
+
+**7. Enforce Consistent Naming for Common Entities**
+To ensure that APIs can be easily connected, use standardized, common names for parameters that represent the same core entity. An ID that is an output of one function should have the **exact same name** if it is used as an input to another.
+
+* **Correct Example:**
+    * `create_user` (output) -> `user_id`
+    * `get_user_details` (input) -> `user_id`
+
+* **Incorrect Example:**
+    * `create_order` (output) -> `order_identifier`
+    * `track_order` (input) -> `order_ref`
+
+* **Correct Example:**
+    * `calculate_area` (output) -> `area`
+    * `calculate_volume` (input) -> `area`
+
+* **Correct Example:**
+    * `find_files` (output) -> `file_path`
+    * `get_file_permissions` (input) -> `file_path`
+
+**Use common identifiers like `user_id`, `product_id`, `order_id`, `session_id`, etc., consistently across all generated APIs.**
+
+---
+
+Output only a JSON list.
+```json

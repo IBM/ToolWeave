@@ -1,0 +1,3 @@
+# Give the prompt paths relative to the project root
+USER_UTTERANCE_PARAPHRASER_PROMPT_PATH: "prompts/chat_template_prompts/user/utterance_paraphraser"
+USER_CLARIFICATION_PARAPHRASER_PROMPT_PATH: "prompts/chat_template_prompts/user/clarification_paraphraser"

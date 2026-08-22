@@ -1,0 +1,43 @@
+You are an expert API designer. Your task is to determine the **minimal set of parameters that MUST be required** to make a logical and useful call to the given API function.
+
+### Decision Rules:
+
+1.  **Primary Key Rule:** A parameter is **REQUIRED** if the API cannot function without it. Think of it as the primary key for the action. For example, `get_user_details` is useless without `user_id`.
+2.  **No Useless Calls Rule:** If calling an API with zero parameters would result in a nonsensical or uselessly generic action (like searching for nothing, or updating nothing), you **MUST** designate one or more parameters as required.
+3.  **Identify the Core Subject:** For any API that gets, searches, updates, deletes, or analyzes a specific resource, at least one parameter identifying that resource (e.g., `user_id`, `query`, `file_id`, `crop_name`) **MUST** be required.
+4.  **Filtering vs. Identifying:** Parameters used for filtering, sorting, or pagination (like `limit`, `sort_by`, `status`, `category`) are almost always **OPTIONAL**. Focus on the core identifier.
+
+---
+### Examples
+
+**Example 1: Correct - Single Required Parameter**
+API: `get_user_details(user_id, include_history)`
+Reasoning: You cannot get details for a user without knowing *which* user. `include_history` is a secondary option.
+Response: `["user_id"]`
+
+**Example 2: Correct - Multiple Required Parameters**
+API: `create_order(product_id, quantity, shipping_method)`
+Reasoning: An order cannot be created without knowing the product, how many to order, and how to ship it. All are essential.
+Response: `["product_id", "quantity", "shipping_method"]`
+
+**Example 3: INCORRECT - Empty list for a search function**
+API: `search_lawyers(specialty, location, rating)`
+Reasoning: Calling this with no parameters would mean "search for all lawyers everywhere of any rating," which is not a useful starting point for a user.
+Incorrect Response: `[]`
+**Correct Response:** `["specialty", "location"]`
+
+---
+### Your Task:
+
+Based on the rules and examples, analyze the following API. What is the absolute minimum set of parameters a developer **must** provide to get a meaningful response?
+
+**API Function Details:**
+- Name: `{api_name}`
+- Description: `{api_description}`
+- Available Parameters:
+{parameters_json}
+
+Return your answer **as a JSON array of strings** containing only the names of the required parameters. Do not return an empty list if the API's primary purpose is to act on a specific resource.
+
+Response:
+```json
