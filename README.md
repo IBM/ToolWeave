@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/images/toolweave-logo.png" alt="ToolWeave" width="420">
+</p>
+
 # ToolWeave: Structured Synthesis of Complex Multi-Turn Tool-Calling Dialogues
 
 This repository contains tools and scripts to generate **synthetic function calling data** for fine-tuning large language models (LLMs).  
