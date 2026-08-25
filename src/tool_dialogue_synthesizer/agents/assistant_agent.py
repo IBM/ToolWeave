@@ -14,7 +14,7 @@ from langchain_core.runnables import Runnable
 
 from src.tool_dialogue_synthesizer.llm.vllm_llm import LLMResponse as VLLMResponse, VLLMClient
 from src.tool_dialogue_synthesizer.llm.watsonx_llm import LLMResponse as WatsonxLLMResponse, WatsonxLLM
-from tool_dialogue_synthesizer.schema import DialogueState
+from src.tool_dialogue_synthesizer.schema import DialogueState
 from src.tool_dialogue_synthesizer.utils.prompts import load_prompt
 from src.tool_dialogue_synthesizer.utils.tool_call_schema import (
     coerce_types_from_schema,
