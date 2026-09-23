@@ -29,6 +29,7 @@ dependencies = [
 [tool.uv]
 # Floors for transitive dependencies with published security fixes (see issue #2).
 constraint-dependencies = [
+    "anyio>=4.14.2",
     "fonttools>=4.60.2",
     "idna>=3.15",
     "langgraph-checkpoint>=4.1.1",

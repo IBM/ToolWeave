@@ -4,7 +4,7 @@ annotated-doc==0.0.5
     # via typer
 annotated-types==0.7.0
     # via pydantic
-anyio==4.10.0
+anyio==4.15.1
     # via
     #   httpx
     #   httpx2
@@ -278,7 +278,6 @@ six==1.17.0
     #   python-dateutil
 sniffio==1.3.1
     # via
-    #   anyio
     #   langsmith
     #   openai
 sparqlwrapper==2.0.0
@@ -324,8 +323,9 @@ truststore==0.10.4 ; sys_platform != 'emscripten'
     #   httpx2
 typer==0.27.2
     # via transformers
-typing-extensions==4.14.1
+typing-extensions==4.16.0
     # via
+    #   anyio
     #   huggingface-hub
     #   langchain-core
     #   langchain-protocol
