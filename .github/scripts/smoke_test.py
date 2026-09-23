@@ -41,7 +41,13 @@ CLI_SCRIPTS = [
 def check_imports() -> list[str]:
     """Import every tracked module and return a list of failures."""
     files = subprocess.check_output(["git", "ls-files", "*.py"], text=True, cwd=REPO_ROOT).split()
-    modules = [f[:-3].replace("/", ".") for f in files if not f.endswith("__init__.py")]
+    modules = [
+        f[:-3].replace("/", ".")
+        for f in files
+        # Skip __init__ files and anything outside the project packages (this
+        # script itself lives under .github/, which is not an importable path).
+        if not f.endswith("__init__.py") and not f.startswith(".")
+    ]
     failures = []
     for module in modules:
         try:

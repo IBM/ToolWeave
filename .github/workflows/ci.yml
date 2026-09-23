@@ -26,6 +26,14 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked
 
+      # api_synthesizer.core.generator loads all-MiniLM-L6-v2 at import time,
+      # so cache it rather than re-downloading ~90MB on every run.
+      - name: Cache Hugging Face models
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-all-MiniLM-L6-v2
+
       - name: Run smoke test
         run: uv run python .github/scripts/smoke_test.py
 
