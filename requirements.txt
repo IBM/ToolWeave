@@ -41,14 +41,14 @@ distro==1.9.0
     #   openai
 executing==2.2.0
     # via stack-data
-filelock==3.32.6
+filelock==4.2.4
     # via
     #   huggingface-hub
     #   toolweave
     #   torch
 fonttools==4.65.0
     # via matplotlib
-fsspec==2025.7.0
+fsspec==2026.9.0
     # via
     #   huggingface-hub
     #   torch
@@ -196,7 +196,7 @@ parso==0.8.4
     # via jedi
 pexpect==4.9.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
     # via ipython
-pillow==12.3.0
+pillow==13.0.0
     # via matplotlib
 prompt-toolkit==3.0.51
     # via ipython
@@ -268,7 +268,7 @@ scipy==1.16.1
     #   sentence-transformers
 sentence-transformers==6.0.1
     # via toolweave
-setuptools==84.0.0
+setuptools==84.2.1
     # via torch
 shellingham==1.5.4
     # via typer
@@ -340,7 +340,7 @@ typing-inspection==0.4.1
     # via pydantic
 tzdata==2025.2
     # via pandas
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   ibm-cos-sdk-core
     #   ibm-watsonx-ai

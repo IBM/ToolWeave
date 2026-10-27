@@ -46,17 +46,14 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Fetch Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      # Only security updates are merged automatically. Anything else (including
-      # a major-version bump) is left for a human to review.
-      - name: Enable auto-merge for security updates
-        if: steps.metadata.outputs.alert-state == 'OPEN' && steps.metadata.outputs.update-type != 'version-update:semver-major'
-        run: gh pr merge --squash --auto "$PR_URL"
+      # Dependabot opens PRs here only for security fixes, and this job runs
+      # only after `verify` passes. Major-version bumps are merged too:
+      # security fixes often ship as majors (e.g. Pillow 13), and excluding
+      # them silently left a critical CVE unmerged (see issue #7).
+      - name: Merge
+        run: |
+          gh pr merge --squash --auto "$PR_URL" \
+            || gh pr merge --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
