@@ -30,6 +30,7 @@ dependencies = [
 # Floors for transitive dependencies with published security fixes (see issue #2).
 constraint-dependencies = [
     "anyio>=4.14.2",
+    "certifi>=2026.10.18",
     "fonttools>=4.60.2",
     "fsspec>=2026.6.0",
     "idna>=3.15",
