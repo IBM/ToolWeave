@@ -34,20 +34,6 @@ jobs:
           path: ~/.cache/huggingface
           key: hf-all-MiniLM-L6-v2
 
-      # requirements.txt is generated from uv.lock. Dependabot sometimes edits
-      # one without the other, which leaves the vulnerable version pinned in
-      # the lock and the alert open (see #7 / PR #8).
-      - name: Check requirements.txt matches uv.lock
-        run: |
-          uv export --format requirements-txt --no-hashes --no-emit-project \
-            --quiet -o /tmp/requirements.expected
-          # Ignore comments: uv records the output path in the file header.
-          if ! diff -u <(grep -v '^#' requirements.txt) \
-                       <(grep -v '^#' /tmp/requirements.expected); then
-            echo "::error::requirements.txt is out of sync with uv.lock. Run: uv lock && uv export --format requirements-txt --no-hashes --no-emit-project -o requirements.txt"
-            exit 1
-          fi
-
       - name: Run smoke test
         run: uv run python .github/scripts/smoke_test.py
 

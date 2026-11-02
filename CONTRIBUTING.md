@@ -30,6 +30,13 @@ The project targets **Python 3.13+** and pins its dependencies in `uv.lock`.
 uv sync
 ```
 
+`uv.lock` is the single source of truth for dependency versions. If you prefer
+pip, generate a requirements file from the lock on demand:
+
+```bash
+uv export --format requirements-txt --no-hashes --no-emit-project -o requirements.txt
+```
+
 To use watsonx.ai models, create a `.env` file in the repository root as
 described in the [README](README.md), and set your model parameters in
 `watsonx_llm_config.yml`. For a vLLM endpoint, use `vllm_llm_config.yml`
